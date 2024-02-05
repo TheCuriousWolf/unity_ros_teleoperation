@@ -5,26 +5,26 @@ using RosMessageTypes.Actionlib;
 
 namespace RosMessageTypes.NerfTeleoperation
 {
-    public class RenderActionResult : ActionResult<RenderResult>
+    public class NerfRenderRequestActionResult : ActionResult<NerfRenderRequestResult>
     {
-        public const string k_RosMessageName = "nerf_teleoperation/RenderActionResult";
+        public const string k_RosMessageName = "nerf_teleoperation_msgs/NerfRenderRequestActionResult";
         public override string RosMessageName => k_RosMessageName;
 
 
-        public RenderActionResult() : base()
+        public NerfRenderRequestActionResult() : base()
         {
-            this.result = new RenderResult();
+            this.result = new NerfRenderRequestResult();
         }
 
-        public RenderActionResult(HeaderMsg header, GoalStatusMsg status, RenderResult result) : base(header, status)
+        public NerfRenderRequestActionResult(HeaderMsg header, GoalStatusMsg status, NerfRenderRequestResult result) : base(header, status)
         {
             this.result = result;
         }
-        public static RenderActionResult Deserialize(MessageDeserializer deserializer) => new RenderActionResult(deserializer);
+        public static NerfRenderRequestActionResult Deserialize(MessageDeserializer deserializer) => new NerfRenderRequestActionResult(deserializer);
 
-        RenderActionResult(MessageDeserializer deserializer) : base(deserializer)
+        NerfRenderRequestActionResult(MessageDeserializer deserializer) : base(deserializer)
         {
-            this.result = RenderResult.Deserialize(deserializer);
+            this.result = NerfRenderRequestResult.Deserialize(deserializer);
         }
         public override void SerializeTo(MessageSerializer serializer)
         {

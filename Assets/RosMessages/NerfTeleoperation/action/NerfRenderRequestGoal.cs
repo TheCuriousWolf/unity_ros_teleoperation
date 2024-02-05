@@ -8,9 +8,9 @@ using Unity.Robotics.ROSTCPConnector.MessageGeneration;
 namespace RosMessageTypes.NerfTeleoperation
 {
     [Serializable]
-    public class RenderGoal : Message
+    public class NerfRenderRequestGoal : Message
     {
-        public const string k_RosMessageName = "nerf_teleoperation/Render";
+        public const string k_RosMessageName = "nerf_teleoperation_msgs/NerfRenderRequest";
         public override string RosMessageName => k_RosMessageName;
 
         //  Goal
@@ -32,7 +32,7 @@ namespace RosMessageTypes.NerfTeleoperation
         public string frame_id;
         public int client_id;
 
-        public RenderGoal()
+        public NerfRenderRequestGoal()
         {
             this.width = 0;
             this.height = 0;
@@ -53,7 +53,7 @@ namespace RosMessageTypes.NerfTeleoperation
             this.client_id = 0;
         }
 
-        public RenderGoal(short width, short height, byte mode, float resolution, float fov_factor, float focal_length_x, float focal_length_y, float principal_point_x, float principal_point_y, float k1, float k2, float p1, float p2, float box_size, Geometry.PoseMsg pose, string frame_id, int client_id)
+        public NerfRenderRequestGoal(short width, short height, byte mode, float resolution, float fov_factor, float focal_length_x, float focal_length_y, float principal_point_x, float principal_point_y, float k1, float k2, float p1, float p2, float box_size, Geometry.PoseMsg pose, string frame_id, int client_id)
         {
             this.width = width;
             this.height = height;
@@ -74,9 +74,9 @@ namespace RosMessageTypes.NerfTeleoperation
             this.client_id = client_id;
         }
 
-        public static RenderGoal Deserialize(MessageDeserializer deserializer) => new RenderGoal(deserializer);
+        public static NerfRenderRequestGoal Deserialize(MessageDeserializer deserializer) => new NerfRenderRequestGoal(deserializer);
 
-        private RenderGoal(MessageDeserializer deserializer)
+        private NerfRenderRequestGoal(MessageDeserializer deserializer)
         {
             deserializer.Read(out this.width);
             deserializer.Read(out this.height);
@@ -120,7 +120,7 @@ namespace RosMessageTypes.NerfTeleoperation
 
         public override string ToString()
         {
-            return "RenderGoal: " +
+            return "NerfRenderRequestGoal: " +
             "\nwidth: " + width.ToString() +
             "\nheight: " + height.ToString() +
             "\nmode: " + mode.ToString() +

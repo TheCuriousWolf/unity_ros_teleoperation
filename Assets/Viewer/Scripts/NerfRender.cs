@@ -62,14 +62,14 @@ public class NerfRender : MonoBehaviour
     void Start()
     {
         ros = ROSConnection.GetOrCreateInstance();
-        ros.Subscribe<RenderActionFeedback>(renderTopicName+"/feedback", RenderFbCallback);
-        ros.Subscribe<RenderActionResult>(renderTopicName+"/result", RenderCallback);
+        ros.Subscribe<NerfRenderRequestActionFeedback>(renderTopicName+"/feedback", RenderFbCallback);
+        ros.Subscribe<NerfRenderRequestActionResult>(renderTopicName+"/result", RenderCallback);
         if(trackProgress)
         {
             ros.Subscribe<UInt16Msg>("nerf_step", NerfStepCallback);
             ros.Subscribe<Float32Msg>("nerf_loss", NerfLossCallback);
         }
-        ros.RegisterPublisher<RenderActionGoal>(renderTopicName+"/goal");
+        ros.RegisterPublisher<NerfRenderRequestActionGoal>(renderTopicName+"/goal");
 
         ID = gameObject.GetInstanceID();
 
@@ -85,7 +85,7 @@ public class NerfRender : MonoBehaviour
         lossText.SetText("Loss: " + loss.data.ToString("0.000"));
     }
 
-    void RenderFbCallback(RenderActionFeedback fb){
+    void RenderFbCallback(NerfRenderRequestActionFeedback fb){
         if(fb.feedback.client_id != ID) return;
         
 
@@ -119,7 +119,7 @@ public class NerfRender : MonoBehaviour
         depthTexture.Apply();
     }
 
-    void RenderCallback(RenderActionResult res){
+    void RenderCallback(NerfRenderRequestActionResult res){
         if(res.result.client_id != ID) return;
 
         CompressedImageMsg rgbImage = res.result.rgb_image;
@@ -149,7 +149,7 @@ public class NerfRender : MonoBehaviour
     // Update is called once per frame
     public void Render()
     {
-        RenderGoal goal = new RenderGoal();
+        NerfRenderRequestGoal goal = new NerfRenderRequestGoal();
         PoseMsg cameraPose = new PoseMsg();
 
         int pow = mode == RenderMode.VR ? 9 : 8;
@@ -173,7 +173,7 @@ public class NerfRender : MonoBehaviour
 
         goal.pose = cameraPose;
 
-        RenderActionGoal action = new RenderActionGoal();
+        NerfRenderRequestActionGoal action = new NerfRenderRequestActionGoal();
         action.goal = goal;
 
         ros.Publish(renderTopicName+"/goal", action);

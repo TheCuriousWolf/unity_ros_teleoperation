@@ -5,26 +5,26 @@ using RosMessageTypes.Actionlib;
 
 namespace RosMessageTypes.NerfTeleoperation
 {
-    public class RenderActionGoal : ActionGoal<RenderGoal>
+    public class NerfRenderRequestActionGoal : ActionGoal<NerfRenderRequestGoal>
     {
-        public const string k_RosMessageName = "nerf_teleoperation/RenderActionGoal";
+        public const string k_RosMessageName = "nerf_teleoperation_msgs/NerfRenderRequestActionGoal";
         public override string RosMessageName => k_RosMessageName;
 
 
-        public RenderActionGoal() : base()
+        public NerfRenderRequestActionGoal() : base()
         {
-            this.goal = new RenderGoal();
+            this.goal = new NerfRenderRequestGoal();
         }
 
-        public RenderActionGoal(HeaderMsg header, GoalIDMsg goal_id, RenderGoal goal) : base(header, goal_id)
+        public NerfRenderRequestActionGoal(HeaderMsg header, GoalIDMsg goal_id, NerfRenderRequestGoal goal) : base(header, goal_id)
         {
             this.goal = goal;
         }
-        public static RenderActionGoal Deserialize(MessageDeserializer deserializer) => new RenderActionGoal(deserializer);
+        public static NerfRenderRequestActionGoal Deserialize(MessageDeserializer deserializer) => new NerfRenderRequestActionGoal(deserializer);
 
-        RenderActionGoal(MessageDeserializer deserializer) : base(deserializer)
+        NerfRenderRequestActionGoal(MessageDeserializer deserializer) : base(deserializer)
         {
-            this.goal = RenderGoal.Deserialize(deserializer);
+            this.goal = NerfRenderRequestGoal.Deserialize(deserializer);
         }
         public override void SerializeTo(MessageSerializer serializer)
         {

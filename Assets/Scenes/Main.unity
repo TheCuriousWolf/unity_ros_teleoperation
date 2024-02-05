@@ -4447,6 +4447,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Viewer
       objectReference: {fileID: 0}
+    - target: {fileID: 1002216694164343977, guid: b9613c1122aa8218782982423367ffa8, type: 3}
+      propertyPath: defaultIP
+      value: localhost
+      objectReference: {fileID: 0}
     - target: {fileID: 1553926955011151874, guid: b9613c1122aa8218782982423367ffa8, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 

@@ -8,12 +8,12 @@ using Unity.Robotics.ROSTCPConnector.MessageGeneration;
 namespace RosMessageTypes.NerfTeleoperation
 {
     [Serializable]
-    public class RenderResult : Message
+    public class NerfRenderRequestFeedback : Message
     {
-        public const string k_RosMessageName = "nerf_teleoperation/Render";
+        public const string k_RosMessageName = "nerf_teleoperation_msgs/NerfRenderRequest";
         public override string RosMessageName => k_RosMessageName;
 
-        //  Result
+        //  Feedback
         public Sensor.CompressedImageMsg rgb_image;
         public Sensor.ImageMsg depth_image;
         public float resolution;
@@ -21,7 +21,7 @@ namespace RosMessageTypes.NerfTeleoperation
         public int client_id;
         public ushort seq;
 
-        public RenderResult()
+        public NerfRenderRequestFeedback()
         {
             this.rgb_image = new Sensor.CompressedImageMsg();
             this.depth_image = new Sensor.ImageMsg();
@@ -31,7 +31,7 @@ namespace RosMessageTypes.NerfTeleoperation
             this.seq = 0;
         }
 
-        public RenderResult(Sensor.CompressedImageMsg rgb_image, Sensor.ImageMsg depth_image, float resolution, float render_time, int client_id, ushort seq)
+        public NerfRenderRequestFeedback(Sensor.CompressedImageMsg rgb_image, Sensor.ImageMsg depth_image, float resolution, float render_time, int client_id, ushort seq)
         {
             this.rgb_image = rgb_image;
             this.depth_image = depth_image;
@@ -41,9 +41,9 @@ namespace RosMessageTypes.NerfTeleoperation
             this.seq = seq;
         }
 
-        public static RenderResult Deserialize(MessageDeserializer deserializer) => new RenderResult(deserializer);
+        public static NerfRenderRequestFeedback Deserialize(MessageDeserializer deserializer) => new NerfRenderRequestFeedback(deserializer);
 
-        private RenderResult(MessageDeserializer deserializer)
+        private NerfRenderRequestFeedback(MessageDeserializer deserializer)
         {
             this.rgb_image = Sensor.CompressedImageMsg.Deserialize(deserializer);
             this.depth_image = Sensor.ImageMsg.Deserialize(deserializer);
@@ -65,7 +65,7 @@ namespace RosMessageTypes.NerfTeleoperation
 
         public override string ToString()
         {
-            return "RenderResult: " +
+            return "NerfRenderRequestFeedback: " +
             "\nrgb_image: " + rgb_image.ToString() +
             "\ndepth_image: " + depth_image.ToString() +
             "\nresolution: " + resolution.ToString() +
@@ -81,7 +81,7 @@ namespace RosMessageTypes.NerfTeleoperation
 #endif
         public static void Register()
         {
-            MessageRegistry.Register(k_RosMessageName, Deserialize, MessageSubtopic.Result);
+            MessageRegistry.Register(k_RosMessageName, Deserialize, MessageSubtopic.Feedback);
         }
     }
 }

@@ -5,26 +5,26 @@ using RosMessageTypes.Actionlib;
 
 namespace RosMessageTypes.NerfTeleoperation
 {
-    public class RenderActionFeedback : ActionFeedback<RenderFeedback>
+    public class NerfRenderRequestActionFeedback : ActionFeedback<NerfRenderRequestFeedback>
     {
-        public const string k_RosMessageName = "nerf_teleoperation/RenderActionFeedback";
+        public const string k_RosMessageName = "nerf_teleoperation_msgs/NerfRenderRequestActionFeedback";
         public override string RosMessageName => k_RosMessageName;
 
 
-        public RenderActionFeedback() : base()
+        public NerfRenderRequestActionFeedback() : base()
         {
-            this.feedback = new RenderFeedback();
+            this.feedback = new NerfRenderRequestFeedback();
         }
 
-        public RenderActionFeedback(HeaderMsg header, GoalStatusMsg status, RenderFeedback feedback) : base(header, status)
+        public NerfRenderRequestActionFeedback(HeaderMsg header, GoalStatusMsg status, NerfRenderRequestFeedback feedback) : base(header, status)
         {
             this.feedback = feedback;
         }
-        public static RenderActionFeedback Deserialize(MessageDeserializer deserializer) => new RenderActionFeedback(deserializer);
+        public static NerfRenderRequestActionFeedback Deserialize(MessageDeserializer deserializer) => new NerfRenderRequestActionFeedback(deserializer);
 
-        RenderActionFeedback(MessageDeserializer deserializer) : base(deserializer)
+        NerfRenderRequestActionFeedback(MessageDeserializer deserializer) : base(deserializer)
         {
-            this.feedback = RenderFeedback.Deserialize(deserializer);
+            this.feedback = NerfRenderRequestFeedback.Deserialize(deserializer);
         }
         public override void SerializeTo(MessageSerializer serializer)
         {
