@@ -358,7 +358,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2084164023}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1185d37376fa7ac79a90d08b59b34f6e, type: 3}
   m_Name: 
@@ -387,6 +387,7 @@ MonoBehaviour:
   decimator: 10
   timeScale: 1
   scale: 1
+  debug: 1
 --- !u!4 &2084164026
 Transform:
   m_ObjectHideFlags: 0

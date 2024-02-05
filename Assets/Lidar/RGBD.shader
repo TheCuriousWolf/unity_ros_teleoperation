@@ -1,10 +1,5 @@
-Shader "Unlit/Lidar"
+Shader "Unlit/RGBD"
 {
-    Properties
-    {
-        _ColorMin ("Intensity min", Color) = (0, 0, 0, 0)
-        _ColorMax ("Intensity max", Color) = (1, 1, 1, 1)
-    }
     SubShader
     {
         Tags { "RenderType"="Opaque" }
@@ -28,7 +23,7 @@ Shader "Unlit/Lidar"
             struct lidardata
             {
                 float3 position;
-                float intensity;
+                float3 rgb;
             };
 
             StructuredBuffer<float3> _Positions;
@@ -48,7 +43,7 @@ Shader "Unlit/Lidar"
                 uv /= float2(_ScreenParams.x/_ScreenParams.y, 1);
                 float4 wpos = mul(_ObjectToWorld, float4(pos, 1.0f));
                 o.pos = mul(UNITY_MATRIX_VP, wpos) + float4(uv,0,0);
-                o.color = lerp(_ColorMin, _ColorMax, _LidarData[instanceID].intensity);
+                o.color = float4(_LidarData[instanceID].rgb, 1.0f);
                 return o;
             }
 
