@@ -27,6 +27,7 @@ public class LidarDrawer : MonoBehaviour
     private int _LidarDataSize = 4*4;
     private ROSConnection _ros;
     private int _displayPts;
+    private Mesh mesh;
 
     void Start()
     {
