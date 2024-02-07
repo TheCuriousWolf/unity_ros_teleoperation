@@ -28,6 +28,7 @@ public class LidarDrawer : MonoBehaviour
     private ROSConnection _ros;
     private int _displayPts;
     private Mesh mesh;
+    private LidarSpawner lidarSpawner;
 
     void Start()
     {
@@ -55,7 +56,7 @@ public class LidarDrawer : MonoBehaviour
         _ros = ROSConnection.GetOrCreateInstance();
         _ros.Subscribe<PointCloud2Msg>(topic, OnPointcloud);
 
-
+        lidarSpawner = GetComponent<LidarSpawner>();
         // lidarSpawner.PointCloudGenerated += OnPointcloud;
     }
 
