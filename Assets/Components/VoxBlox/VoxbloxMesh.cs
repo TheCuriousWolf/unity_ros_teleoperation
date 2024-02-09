@@ -35,21 +35,32 @@ public class VoxbloxMesh : MonoBehaviour
         triangles.AddRange(mesh.triangles);
         colors.AddRange(mesh.colors);
 
-        foreach(MeshBlockMsg block in blocks)
+
+        bool hasColor = false;
+
+        for(int j=0; j<blocks.Length; j++)
         {
+            MeshBlockMsg block = blocks[j];
+            hasColor = block.r.Length == block.x.Length;
+            Color color;
             for(int i=0; i<block.x.Length; i++)
             {
                 float x = ((float)block.x[i] * point_conv_factor + (float)block.index[0]) * block_edge_length;
                 float y = ((float)block.y[i] * point_conv_factor + (float)block.index[1]) * block_edge_length;
                 float z = ((float)block.z[i] * point_conv_factor + (float)block.index[2]) * block_edge_length;
                 vertices.Add(new Vector3(x, y, z));
-                
-                // Color color = new Color(block.r[i], block.g[i], block.b[i]);
-                // Debug.Log(color);
-                // colors.Add(color);
+
+                if(hasColor)
+                {
+                    color = new Color(block.r[i]/255f, block.g[i]/255f, block.b[i]/255f);
+                } else
+                {
+                    color = new Color(.5f, .5f, .5f);
+                }
+                colors.Add(color);
+
                 triangles.Add(i);
             }
-            Debug.Log("color at 0: " + block.r[0] + " " + block.g[0] + " " + block.b[0]);
         }
 
 
