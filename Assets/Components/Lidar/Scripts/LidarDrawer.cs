@@ -87,7 +87,9 @@ public class LidarDrawer : MonoBehaviour
         if(pointCloud.data.Length == 0) return;
         if(pointCloud.data.Length / pointCloud.point_step > maxPts)
         {
-            Debug.LogWarning("Point cloud too large, truncating");
+            int decmiator = (int)(pointCloud.data.Length / pointCloud.point_step / maxPts);
+            Debug.LogWarning("Point cloud too large, truncating by " + decmiator);
+            _ptData.SetData(_ExtractXYZI(pointCloud, rgbd, decmiator));
         }
         else
         {
@@ -95,8 +97,12 @@ public class LidarDrawer : MonoBehaviour
         }
     }
 
-    private byte[] _ExtractXYZI(PointCloud2Msg data, bool rgbd = false)
+    private byte[] _ExtractXYZI(PointCloud2Msg data, bool rgbd = false, int decmiator=1)
     {
+        // Just in case...
+        if(decmiator < 1) decmiator = 1;
+
+        
         // Assumes x, y, z, intensity are the first 4 fields
         int numPts = (int)(data.data.Length / data.point_step);
         numPts = Mathf.Min(numPts, maxPts);
@@ -105,7 +111,8 @@ public class LidarDrawer : MonoBehaviour
 
         for(int i = 0; i < numPts; i++)
         {
-            int inIdx = (int)(i * data.point_step);
+
+            int inIdx = (int)(i * data.point_step * (decmiator));
             int outIdx = i * 4 * (4 + (rgbd ? 2 : 0));
             for(int j = 0; j < 4; j++)
             {

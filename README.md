@@ -100,3 +100,6 @@
 - [ ] splat quest shader
 - [ ] splat streaming
 - [ ] ~~multi client action server *moved to ns plugin*~~
+
+- [ ] Add cancel big red button (Trigger service call)
+- [ ] Change pose to activemission

@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Robotics.ROSTCPConnector;
 using RosMessageTypes.Voxblox;
 using System;
+using Unity.Robotics.ROSTCPConnector.ROSGeometry;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -33,6 +34,8 @@ public class VoxbloxMesh : MonoBehaviour
     public float size = 0.5f;
     private Dictionary<Tuple<long, long, long>, GameObject> blocks;
 
+    public GameObject _parent;
+
 
     void Start()
     {
@@ -43,6 +46,16 @@ public class VoxbloxMesh : MonoBehaviour
         _ros.Subscribe<MeshMsg>(topic, UpdateMesh);
     }
 
+    void UpdatePose(string frame)
+    {
+        _parent = GameObject.Find(frame);
+        if(_parent == null) return;
+
+        transform.parent = _parent.transform;
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+    }
+
     void UpdateMesh(MeshMsg tmpMesh)
     {
         // Debug.Log("Updating mesh: " + tmpMesh.mesh_blocks.Length + " blocks.");
@@ -51,6 +64,11 @@ public class VoxbloxMesh : MonoBehaviour
         float block_edge_length = tmpMesh.block_edge_length;
 
         float point_conv_factor = 2f/System.UInt16.MaxValue;
+
+        if(_parent == null || _parent.name != tmpMesh.header.frame_id)
+        {
+            UpdatePose(tmpMesh.header.frame_id);
+        }
 
 
         bool hasColor = false;
@@ -77,6 +95,7 @@ public class VoxbloxMesh : MonoBehaviour
                 blockObj.transform.parent = transform;
                 blockObj.transform.localPosition = Vector3.zero;
                 blockObj.transform.localRotation = Quaternion.identity;
+                blockObj.transform.localScale = Vector3.one;
                 blocks.Add(index, blockObj);
 
                 mesh = new Mesh();
@@ -95,11 +114,15 @@ public class VoxbloxMesh : MonoBehaviour
                 float x = ((float)block.x[i] * point_conv_factor + (float)block.index[0]) * block_edge_length;
                 float y = ((float)block.y[i] * point_conv_factor + (float)block.index[1]) * block_edge_length;
                 float z = ((float)block.z[i] * point_conv_factor + (float)block.index[2]) * block_edge_length;
-                vertices.Add(new Vector3(x, y, z));
+
+                // switch between ros and unity coordinates
+                Vector3 pos = new Vector3<FLU>(x, y, z).toUnity;
+
+                vertices.Add(pos);
 
                 if(debug)
                 {
-                    Debug.DrawRay(new Vector3(x, y, z), Vector3.up*size, Color.red,20f);
+                    Debug.DrawRay(pos, Vector3.up*size, Color.red,20f);
                 }
 
                 if(hasColor)

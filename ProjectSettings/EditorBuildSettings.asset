@@ -8,9 +8,18 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Main.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
+  - enabled: 0
     path: Assets/Components/Hands/HandTester.unity
     guid: b2f4b25e61a8e1f4c894726eb0d70f10
+  - enabled: 0
+    path: Assets/Components/Lidar/LidarTester.unity
+    guid: d61d61fa61a78398b816f8b51efef317
+  - enabled: 0
+    path: Assets/Components/VoxBlox/VoxBloxTester.unity
+    guid: a6c6d65b093ee394b8bf77454dd06aa0
+  - enabled: 1
+    path: Assets/Components/PosePublisher/PoseTester.unity
+    guid: 1a78d5d9414241ed9b8a2ce1af602d6e
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: d692ced636ecadb9a99ecb6e0247e7b6, type: 2}
     com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: 9502fd768ba2eebf9a447f1eb9e39f11, type: 2}

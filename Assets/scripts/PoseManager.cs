@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.Events;
 
 public class PoseManager : MonoBehaviour
 {
 
     public InputActionReference joystickXY;
     public InputActionReference joystickZR;
+    public InputActionReference alt;
+    public InputActionReference action;
+    public UnityEvent actions;
     public GameObject sphere;
     public float speed = 1.0f;
     public bool handSelectable = false;
@@ -25,6 +29,12 @@ public class PoseManager : MonoBehaviour
         // need to ensure this happens after tf init....
         _mainCamera = Camera.main.transform;
 
+        if (actions != null && action == null)
+        {
+            actions = null;
+            Debug.LogWarning("PoseManager: actions set but action not set");
+        }
+
     }
 
     void Update()
@@ -34,17 +44,42 @@ public class PoseManager : MonoBehaviour
             root = root.parent;
             _root = root;
             Debug.Log("root frame: " + root);
-        
-        } 
-        
+
+        }
+
+        if (action.action.IsPressed())
+        {
+            if (alt.action.IsPressed())
+            {
+                ResetScale();
+            }
+            else if (actions != null)
+            {
+                actions.Invoke();
+            }
+        }
+
+
         if (joystickXY.action.IsPressed() || joystickZR.action.IsPressed())
         {
-            Move(joystickXY.action.ReadValue<Vector2>());
+            if (alt.action.IsPressed())
+                Scale(joystickXY.action.ReadValue<Vector2>());
+            else
+                Move(joystickXY.action.ReadValue<Vector2>());
+
             OffsetRotate(joystickZR.action.ReadValue<Vector2>());
+
             sphere.SetActive(true);
-        } else {
+        }
+        else
+        {
             sphere.SetActive(false);
         }
+    }
+
+    void ResetScale()
+    {
+        _root.localScale = Vector3.one;
     }
 
     void Move(Vector2 input)
@@ -58,7 +93,13 @@ public class PoseManager : MonoBehaviour
         // zero out the vertical component
         move.y = 0;
         // move the gameobject relative to the player regardless of gameobject orientation
-        _root.Translate(move * speed * Time.deltaTime, Space.World);        
+        _root.Translate(move * speed * Time.deltaTime, Space.World);
+    }
+
+    void Scale(Vector2 input)
+    {
+        Vector3 scale = new Vector3(input.x, input.x, input.x);
+        _root.localScale += scale * speed * Time.deltaTime;
     }
 
     void OffsetRotate(Vector2 input)
