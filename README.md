@@ -92,14 +92,21 @@
     - _seems_ to work out of the box for tf tracking (2 joints mislabeled/rotated, although might be issue with source)
 - [x] Pointcloud2 viz to particle system
     - works well enough, need to determine if lag is from network or render delays
+- [x] Change pose to activemission
+    - verifed working pose for location
+- [x] Add cancel big red button (Trigger service call) 
+    - Sends cancel mission signal
+- [x] Fix realsense tf tracking
+    - temp ensure within odom hierachy
+
 
 
 - [ ] Center around map (inverse tf)
-- [ ] Fix realsense tf tracking
 - [ ] async tcp
 - [ ] splat quest shader
 - [ ] splat streaming
-- [ ] ~~multi client action server *moved to ns plugin*~~
+- [ ] tf lidar pose spike without tf/data
+- [ ] better tf management
+- [ ] nerf scene poses
 
-- [ ] Add cancel big red button (Trigger service call)
-- [ ] Change pose to activemission
+
