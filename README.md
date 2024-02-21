@@ -1,3 +1,21 @@
+# Unity ROS Teleoperation Project
+
+This repo contains a series of components for Unity XR teleoperation with ROS integration. On the ROS side, the custom [TCP Endpoint](https://github.com/leggedrobotics/ROS-TCP-Endpoint) is needed in the catkin_ws.
+
+## Components
+
+| Component | Description | Location | Status |
+| --- | --- | --- | --- |
+| NeRFViewer | Handheld viewer for rendering NeRFs and scene interaction | [Assets/Components/Viewer](Assets/Components/Viewer) | Functional |
+| Hands | Hand tracking and pose publishing over ROS, compatible with Ability hand models | [Assets/Components/Hands](Assets/Components/Hands) | Functional |
+| Lidar | GPU rendering for LiDAR and PointCloud2 point viz from ROS | [Assets/Components/Lidar](Assets/Components/Lidar) | Needs clean up |
+| PosePublisher | Publishes a pose from select and drag interaction and publishes as a ActiveMission for Alma locomotion | [Assets/Components/PosePublisher](Assets/Components/PosePublisher) | Functional (stop needs work) |
+| Voxblox | Voxel mesh rendering | [Assets/Components/Voxblox](Assets/Components/Voxblox) | Complete |
+| Splat | 3D viewer for Gaussian Splats | [Assets/Components/Splat](Assets/Components/Splat) | Incomplete |
+| Image Renderer | Duplicates pose from a transfrom.json to render an image | [Assets/Components/ImageRenderer](Assets/Components/ImageRenderer) | Needs testing |
+| Alma | Full Alma model compatible with Unity and linked to TF syste | [Assets/Components/Alma](Assets/Components/Alma) | Needs mesh clean up |
+
+
 # THINGS TO DO
 
 - [x] ROS to Unity
