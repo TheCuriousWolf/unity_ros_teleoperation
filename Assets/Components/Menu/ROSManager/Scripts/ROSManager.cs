@@ -1,11 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
+using TMPro;
+using Unity.Robotics.ROSTCPConnector;
+
 
 public class ROSManager : MonoBehaviour
 {
-    public delegate void ConnectionColor(Color color);
-    public ConnectionColor OnConnectionColor;
+    // public delegate void ConnectionColor(Color color);
+    // public ConnectionColor OnConnectionColor;
+    // public event ConnectionColor OnConnectionColor;
+
+    public UnityEvent<bool> OnConnectionColor;
+    public Dropdown ipDropdown;
 
     private List<string> _ips;
     public string defaultIP = "10.42.0.1";
@@ -21,6 +30,8 @@ public class ROSManager : MonoBehaviour
 
     private ROSConnection _ros;
     private bool _connected = false;
+
+    public GameObject menu;
 
     void Start()
     {
@@ -58,6 +69,17 @@ public class ROSManager : MonoBehaviour
 
         _ros = ROSConnection.GetOrCreateInstance();
 
+        menu.SetActive(false);
+
+        ipDropdown.ClearOptions();
+        ipDropdown.AddOptions(_ips);
+
+        ipDropdown.onValueChanged.AddListener(delegate {
+            OnPreset(ipDropdown.value);
+        });
+
+
+
 
         _ros.RosPort = _port;
         _ros.RosIPAddress = _ip;
@@ -69,30 +91,45 @@ public class ROSManager : MonoBehaviour
 
     }
 
+    public void ToggleMenu()
+    {
+        menu.SetActive(!menu.activeSelf);
+    }
+
     public void OnIPDone(string ip)
     {
+        _ros.Disconnect();
         _ip = ip;
         _ros.RosIPAddress = _ip;
         PlayerPrefs.SetString("ip", _ip);
         PlayerPrefs.Save();
+        _ros.Connect();
+    }
 
+    public void OnPreset(int index)
+    {
+        _ip = _ips[index];
+        OnIPDone(_ip);
     }
 
     void Update()
     {
-        if(_connected != _ros.IsConnected)
+        if(_connected == _ros.HasConnectionError)
         {
-            _connected = _ros.IsConnected;
-            if(_connected)
-            {
-                OnConnectionColor?.Invoke(Color.green);
-            }
-            else
-            {
-                OnConnectionColor?.Invoke(Color.red);
-            }
+            _connected = !_ros.HasConnectionError;
+            OnConnectionColor.Invoke(_connected);
         }
 
+    }
+
+    public void DeleteIP()
+    {
+        _ips.Remove(_ip);
+        PlayerPrefs.SetString("ips", string.Join(",", _ips));
+        PlayerPrefs.Save();
+
+        ipDropdown.ClearOptions();
+        ipDropdown.AddOptions(_ips);
     }
 
     public void SaveIP()
@@ -103,5 +140,8 @@ public class ROSManager : MonoBehaviour
         }
         PlayerPrefs.SetString("ips", string.Join(",", _ips));
         PlayerPrefs.Save();
+
+        ipDropdown.ClearOptions();
+        ipDropdown.AddOptions(_ips);
     }
 }

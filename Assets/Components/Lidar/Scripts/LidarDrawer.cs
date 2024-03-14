@@ -91,8 +91,10 @@ public class LidarDrawer : MonoBehaviour
         List<GameObject> children = new List<GameObject>();
 
         // check if this is connected to root
+        int count = 0;
         while(target.transform.parent != null)
         {
+            count++;
             children.Add(target);
             target = target.transform.parent.gameObject;
             if(target.name == "odom")
@@ -100,6 +102,11 @@ public class LidarDrawer : MonoBehaviour
                 children.Clear();
                 Debug.Log("Connected to root");
                 return true;
+            }
+            if(count > 100)
+            {
+                Debug.LogWarning("Too many iterations");
+                return false;
             }
         }
 

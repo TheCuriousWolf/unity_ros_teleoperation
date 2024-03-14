@@ -23,6 +23,7 @@ public class DebugLoggerEditor : Editor
 
 public class DebugLogger : MonoBehaviour
 {
+    public static bool active = true;
     public int qsize = 150;  // number of messages to keep
     public bool startActive = false;
 

@@ -12,6 +12,7 @@ public class Summon : MonoBehaviour
 
     // public GameObject palm;
     public bool active;
+    public bool reversed = false;
     public bool useHand = true;
     public float speed = 1f;
     public Vector3 offset = new Vector3(0,0.5f,0);
@@ -43,7 +44,14 @@ public class Summon : MonoBehaviour
         {
             transform.position += diff * Time.deltaTime * speed / diff.magnitude;
             // rotate over time to face forward
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(Camera.main.transform.position - palm + offset/2), 360 * Time.deltaTime);
+            if (reversed)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(palm - Camera.main.transform.position + offset / 2), 180);
+            }
+            else
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(Camera.main.transform.position - palm + offset / 2), 360 * Time.deltaTime);
+            }
         }
     }
 }

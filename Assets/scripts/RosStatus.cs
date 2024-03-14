@@ -53,6 +53,7 @@ public class RosStatus : MonoBehaviour
         ros.RosPort = port;
         _portText.text = port.ToString();
 
+        Debug.Log("Connecting to " + ros.RosIPAddress + ":" + ros.RosPort);
         ros.Connect();
     }
 
@@ -129,6 +130,8 @@ public class RosStatus : MonoBehaviour
         PlayerPrefs.Save();
         ros.Disconnect();
         ros.Connect();
+        Debug.Log("Set IP to " + ip);
+
     }
 
     public void OnPortDone(string port)
