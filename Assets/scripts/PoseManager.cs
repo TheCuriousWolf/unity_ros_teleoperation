@@ -5,6 +5,37 @@ using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.Events;
 
+#if UNITY_EDITOR
+using UnityEditor;
+
+[CustomEditor(typeof(PoseManager))]
+public class PoseManagerEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        PoseManager myScript = (PoseManager)target;
+        if (GUILayout.Button("Center robot"))
+        {
+            myScript.BaseToLocation(Vector3.zero);
+        }
+        if (GUILayout.Button("Toggle Fixed Location"))
+        {
+            myScript.ToggleFixedLocation();
+        }
+        if (GUILayout.Button("Lock"))
+        {
+            myScript.SetLocked(true);
+        }
+        if (GUILayout.Button("Unlock"))
+        {
+            myScript.SetLocked(false);
+        }
+    }
+}
+#endif
+
 public class PoseManager : MonoBehaviour
 {
 
@@ -19,6 +50,10 @@ public class PoseManager : MonoBehaviour
     public Transform root;
     public Transform _root;
     private Transform _mainCamera;
+    private Transform _robot;
+
+    private bool _locked = false;
+    private Vector3 _center;
 
     void Start()
     {
@@ -35,6 +70,12 @@ public class PoseManager : MonoBehaviour
             Debug.LogWarning("PoseManager: actions set but action not set");
         }
 
+        _robot = GameObject.FindWithTag("robot").transform;
+        if (_robot == null)
+        {
+            Debug.LogWarning("PoseManager: robot not found");
+        }
+
     }
 
     void Update()
@@ -45,6 +86,11 @@ public class PoseManager : MonoBehaviour
             _root = root;
             Debug.Log("root frame: " + root);
 
+        }
+
+        if(_center != Vector3.zero)
+        {
+            BaseToLocation(_center);
         }
 
         if (action.action.IsPressed())
@@ -59,7 +105,8 @@ public class PoseManager : MonoBehaviour
             }
         }
 
-
+        if(_locked)
+            return;
         if (joystickXY.action.IsPressed() || joystickZR.action.IsPressed())
         {
             if (alt.action.IsPressed())
@@ -77,9 +124,27 @@ public class PoseManager : MonoBehaviour
         }
     }
 
+    public void SetLocked(bool locked)
+    {
+        _locked = locked;
+    }
+
     void ResetScale()
     {
         _root.localScale = Vector3.one;
+    }
+
+    public void ToggleFixedLocation()
+    {
+        if (_center == Vector3.zero)
+        {
+            _center = _robot.position;
+        }
+        else
+        {
+            _center = Vector3.zero;
+        }
+
     }
 
     void Move(Vector2 input)
@@ -121,6 +186,11 @@ public class PoseManager : MonoBehaviour
         XRRayInteractor rayInteractor = (XRRayInteractor)args.interactor;
         rayInteractor.TryGetHitInfo(out position, out _, out _, out _);
         _root.position = position;
+    }
 
+    public void BaseToLocation(Vector3 position)
+    {
+        Vector3 offset = position - _robot.position;
+        _root.position += offset;
     }
 }

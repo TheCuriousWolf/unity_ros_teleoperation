@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -35,6 +36,8 @@ public class MenuManagerEditor : Editor
 
 public class MenuManager : MonoBehaviour
 {
+    public UnityEvent<bool> MenuState;
+
 
     public GameObject[] menus;
 
@@ -115,5 +118,7 @@ public class MenuManager : MonoBehaviour
     {
         _open = _open == i ? -1 : i;
         UpdateState();
+
+        // MenuState.Invoke(_open != -1);
     }
 }

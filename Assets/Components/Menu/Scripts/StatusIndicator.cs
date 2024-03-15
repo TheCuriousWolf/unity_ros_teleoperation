@@ -5,24 +5,37 @@ using UnityEngine.UI;
 
 public class StatusIndicator : MonoBehaviour
 {
-    public Sprite neutral;
-    public Sprite connected;
-    public Sprite disconnected;
+    public Sprite neutralIcon;
+    public Sprite connectedIcon;
+    public Sprite disconnectedIcon;
 
     private Image _image;
     private RawImage _rawImage;
+    private bool _connected = false;
     void Start()
     {
         _image = GetComponentInChildren<Image>();
         _rawImage = GetComponent<RawImage>();
 
-        _image.sprite = neutral;
+        _image.sprite = neutralIcon;
         _rawImage.texture = null;
     }
     
     public void OnRosConnection(bool connected)
     {
-        _image.sprite = connected ? this.connected : disconnected;
+        _connected = connected;
+        _image.sprite = connected ? connectedIcon : disconnectedIcon;
         _rawImage.color = connected ? Color.green : Color.red;
     }
+
+    public void OnDelay(bool stagnant)
+    {
+        if (_connected)
+        {
+        _image.sprite = stagnant ? neutralIcon : connectedIcon;
+
+        }
+    }
+
+
 }

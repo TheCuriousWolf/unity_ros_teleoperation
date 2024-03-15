@@ -28,6 +28,11 @@ public class ImageViewEditor : Editor
         {
             imageView.OnSelect(1);
         }
+        
+        if (GUILayout.Button("Select Second Item"))
+        {
+            imageView.OnSelect(2);
+        }
     }
 }
 #endif
@@ -137,6 +142,7 @@ public class ImageView : MonoBehaviour
                 options.Add(topic.Key);
             }
         }
+
         dropdown.AddOptions(options);
 
         dropdown.value = Mathf.Min(_lastSelected, options.Count - 1);

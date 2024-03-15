@@ -3,6 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+#if UNITY_EDITOR
+using UnityEditor;
+
+[CustomEditor(typeof(LidarManager))]
+public class LidarManagerEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        LidarManager myScript = (LidarManager)target;
+        // add text boxes for the topics
+        myScript.lidarTopic.text = EditorGUILayout.TextField("Lidar Topic", myScript.lidarTopic.text);
+        myScript.rgbdTopic.text = EditorGUILayout.TextField("RGBD Topic", myScript.rgbdTopic.text);
+        if (GUILayout.Button("Update Lidar"))
+        {
+            myScript.OnLidarTopic(myScript.lidarTopic.text);
+        }
+        if (GUILayout.Button("Update RGBD"))
+        {
+            myScript.OnRGBDTopic(myScript.rgbdTopic.text);
+        }
+    }
+}
+
+#endif
+
 public class LidarManager : MonoBehaviour
 {
     public LidarDrawer lidarDrawer;
@@ -34,8 +61,8 @@ public class LidarManager : MonoBehaviour
         lidarTopic.text = _lidarTopic;
         rgbdTopic.text = _rgbdTopic;
 
-        lidarDrawer.OnTopicChange(_lidarTopic);
-        rgbdDrawer.OnTopicChange(_rgbdTopic);
+        lidarDrawer.topic = _lidarTopic;
+        rgbdDrawer.topic = _rgbdTopic;
 
         menu.SetActive(false);
     }
@@ -63,8 +90,8 @@ public class LidarManager : MonoBehaviour
 
     public void Clear()
     {
-        // lidarDrawer.SetActive(false);
-        // rgbdDrawer.SetActive(false);
+        lidarDrawer.enabled = false;
+        rgbdDrawer.enabled = false;
     }
 
     public void Lidar()

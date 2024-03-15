@@ -14,6 +14,9 @@ public class ROSManager : MonoBehaviour
     // public event ConnectionColor OnConnectionColor;
 
     public UnityEvent<bool> OnConnectionColor;
+    public UnityEvent<bool> OnConnectionStagnant;
+
+
     public Dropdown ipDropdown;
 
     private List<string> _ips;
@@ -30,6 +33,7 @@ public class ROSManager : MonoBehaviour
 
     private ROSConnection _ros;
     private bool _connected = false;
+    private bool _stagnant = false;
 
     public GameObject menu;
 
@@ -109,15 +113,21 @@ public class ROSManager : MonoBehaviour
     public void OnPreset(int index)
     {
         _ip = _ips[index];
+        _ipText.text = _ip;
         OnIPDone(_ip);
     }
 
     void Update()
     {
-        if(_connected == _ros.HasConnectionError)
+        if(_connected != !_ros.HasConnectionError)
         {
             _connected = !_ros.HasConnectionError;
             OnConnectionColor.Invoke(_connected);
+        }
+        if(_stagnant != _ros.LastMessageReceivedRealtime - Time.time < 2.5)
+        {
+            _stagnant = _ros.LastMessageReceivedRealtime - Time.time < 2.5;
+            OnConnectionStagnant.Invoke(_stagnant);
         }
 
     }

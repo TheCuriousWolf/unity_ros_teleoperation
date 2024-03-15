@@ -52,8 +52,12 @@ public class LidarDrawer : MonoBehaviour
 
     public GameObject p;
 
-    void Start()
+
+
+    void Awake()
     {
+        _ros = ROSConnection.GetOrCreateInstance();
+
         _LidarDataSize = rgbd ? 4*6 : 4*4;
         mesh = _MakePolygon(sides);
 
@@ -74,7 +78,6 @@ public class LidarDrawer : MonoBehaviour
         renderParams.matProps.SetInt("_BaseVertexIndex", (int)mesh.GetBaseVertex(0));
         renderParams.matProps.SetBuffer("_Positions", _meshVertices);
 
-        _ros = ROSConnection.GetOrCreateInstance();
         // _ros.Subscribe<PointCloud2Msg>(topic, OnPointcloud);
 
 
@@ -87,6 +90,9 @@ public class LidarDrawer : MonoBehaviour
     public bool CleanTF(string name)
     {
         GameObject target = GameObject.Find(name);
+
+
+        Debug.Log("Cleaning " + name + " " + target);
 
         List<GameObject> children = new List<GameObject>();
 
@@ -103,7 +109,7 @@ public class LidarDrawer : MonoBehaviour
                 Debug.Log("Connected to root");
                 return true;
             }
-            if(count > 100)
+            if(count > 1000)
             {
                 Debug.LogWarning("Too many iterations");
                 return false;
@@ -120,6 +126,7 @@ public class LidarDrawer : MonoBehaviour
 
     void UpdatePose(string frame)
     {
+        Debug.Log("Updating pose");
         if(!CleanTF(frame))
         {
             return;
@@ -233,7 +240,10 @@ public class LidarDrawer : MonoBehaviour
 
     public void OnTopicChange(string topic)
     {
-        _ros.Unsubscribe(this.topic);
+        if(this.topic != null)
+        {
+            _ros.Unsubscribe(this.topic);
+        }
         this.topic = topic;
         _ros.Subscribe<PointCloud2Msg>(topic, OnPointcloud);
         Debug.Log("Subscribed to " + topic);
