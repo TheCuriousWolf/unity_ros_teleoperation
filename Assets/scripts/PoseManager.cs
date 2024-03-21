@@ -45,7 +45,9 @@ public class PoseManager : MonoBehaviour
     public InputActionReference action;
     public UnityEvent actions;
     public GameObject sphere;
+    public GameObject floor;
     public float speed = 1.0f;
+    public float rotationTolerance = 5.0f;
     public bool handSelectable = false;
     public Transform root;
     public Transform _root;
@@ -54,6 +56,7 @@ public class PoseManager : MonoBehaviour
 
     private bool _locked = false;
     private Vector3 _center;
+    private Vector3 _forward;
 
     void Start()
     {
@@ -122,6 +125,10 @@ public class PoseManager : MonoBehaviour
         {
             sphere.SetActive(false);
         }
+        if(floor != null)
+        {
+            floor.transform.position = new Vector3(_root.position.x, 0, _root.position.z);
+        }
     }
 
     public void SetLocked(bool locked)
@@ -139,10 +146,12 @@ public class PoseManager : MonoBehaviour
         if (_center == Vector3.zero)
         {
             _center = _robot.position;
+            _forward = _robot.forward;
         }
         else
         {
             _center = Vector3.zero;
+            _forward = Vector3.zero;
         }
 
     }
@@ -192,5 +201,12 @@ public class PoseManager : MonoBehaviour
     {
         Vector3 offset = position - _robot.position;
         _root.position += offset;
+
+        float angle = Vector3.SignedAngle(_robot.forward, _forward, Vector3.up);
+        if (_forward != Vector3.zero && Mathf.Abs(angle) > rotationTolerance)
+        {
+            _root.Rotate(0, angle, 0);
+        }
+
     }
 }
