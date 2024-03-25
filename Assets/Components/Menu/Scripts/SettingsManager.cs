@@ -6,25 +6,55 @@ using UnityEngine.UI;
 public class SettingsManager : MonoBehaviour
 {
     public PoseManager poseManager;
-    public JoystickManager joystickManager;
+    public NvbloxMesh nvbloxMesh;
     public Image axisIcon;
     public Sprite unlockedIcon;
     public Sprite lockedIcon;
     private bool _lockedPose = true;
 
+    private PosePublisher _posePublisher;
+    private JoystickManager _joystickManager;
     void Start()
     {
         poseManager.SetLocked(_lockedPose);
         axisIcon.sprite = _lockedPose ? lockedIcon : unlockedIcon;
-        joystickManager.SetEnabled(_lockedPose);
-        
+
+        _joystickManager = GetComponent<JoystickManager>();
+        _joystickManager.SetEnabled(false);
+
+        _posePublisher = GetComponent<PosePublisher>();
+        _posePublisher.SetEnabled(false);
+    }
+
+    public void ChangeMode(int modes)
+    {
+        switch (modes)
+        {
+            case 0:
+                _joystickManager.SetEnabled(false);
+                _posePublisher.SetEnabled(false);
+                break;
+            case 1:
+                _joystickManager.SetEnabled(false);
+                _posePublisher.SetEnabled(true);
+                break;
+            case 2:
+                _joystickManager.SetEnabled(true);
+                _posePublisher.SetEnabled(false);
+                break;
+        }
+    }
+
+    public void ToggleNvblox()
+    {
+        nvbloxMesh.ToggleEnabled();
     }
 
     public void Recenter()
     {
         Vector3 position = Camera.main.transform.position;
         position += Camera.main.transform.forward*2;
-        position.y = 0;
+        position.y = 0.5f;
 
         poseManager.BaseToLocation(position);
     }
@@ -35,7 +65,6 @@ public class SettingsManager : MonoBehaviour
         poseManager.SetLocked(_lockedPose);
         axisIcon.sprite = _lockedPose ? lockedIcon : unlockedIcon;
 
-        joystickManager.SetEnabled(_lockedPose);
     }
 
 }

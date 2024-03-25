@@ -143,3 +143,4 @@ This repo contains a series of components for Unity XR teleoperation with ROS in
         - [ ] Inverted controls
     - [ ] Smaller model
     - [ ] Table spawner
+    - [ ] Spherical orbit

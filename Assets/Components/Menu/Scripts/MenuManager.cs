@@ -57,6 +57,7 @@ public class MenuManager : MonoBehaviour
         // _menus = new GameObject[] {wifiMenu, settingMenu, cameraMenu, lidarMenu};
         _loggers = FindObjectsOfType<DebugLogger>();
 
+
         foreach(GameObject menu in menus)
         {
             menu.SetActive(false);

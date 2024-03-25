@@ -130,7 +130,6 @@ public class ImageView : MonoBehaviour
 
     void UpdateTopics(Dictionary<string, string> topics)
     {
-        dropdown.ClearOptions();
         List<string> options = new List<string>();
         options.Add("None");
         foreach (var topic in topics)
@@ -142,6 +141,13 @@ public class ImageView : MonoBehaviour
                 options.Add(topic.Key);
             }
         }
+
+        if(options.Count == 1)
+        {
+            Debug.LogWarning("No image topics found!");
+            return;
+        }
+        dropdown.ClearOptions();
 
         dropdown.AddOptions(options);
 
@@ -160,6 +166,23 @@ public class ImageView : MonoBehaviour
         _icon.sprite = _tracking ? tracked : untracked;
         dropdown.gameObject.SetActive(false);
         topMenu.SetActive(false);
+    }
+
+    public void Flip()
+    {
+        Rect rect = _uiImage.uvRect;
+        rect.width *= -1;
+        _uiImage.uvRect = rect;
+    }
+
+    public void ScaleUp()
+    {
+        transform.localScale *= 1.1f;
+    }
+
+    public void ScaleDown()
+    {
+        transform.localScale *= 0.9f;
     }
 
     public void OnClick()

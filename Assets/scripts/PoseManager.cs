@@ -43,7 +43,11 @@ public class PoseManager : MonoBehaviour
     public InputActionReference joystickZR;
     public InputActionReference alt;
     public InputActionReference action;
+    public InputActionReference bAction;
+
     public UnityEvent actions;
+    public UnityEvent bActions;
+
     public GameObject sphere;
     public GameObject floor;
     public float speed = 1.0f;
@@ -105,6 +109,14 @@ public class PoseManager : MonoBehaviour
             else if (actions != null)
             {
                 actions.Invoke();
+            }
+        }
+
+        if(bAction.action.IsPressed())
+        {
+            if (bActions != null)
+            {
+                bActions.Invoke();
             }
         }
 

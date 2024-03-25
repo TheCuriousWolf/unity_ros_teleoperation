@@ -1469,6 +1469,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Bbutton",
+                    "type": "Button",
+                    "id": "2ecd3cbe-81bd-4a8d-b8f2-0ccb7ddc6337",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Summon",
                     "type": "Value",
                     "id": "51253298-0f9b-42eb-acd1-f03217859b76",
@@ -1771,6 +1780,28 @@
                     "processors": "",
                     "groups": "Generic XR Controller",
                     "action": "IsHand",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e249223b-646f-44c2-8f9c-55c344e9973c",
+                    "path": "<XRController>{RightHand}/secondaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "Bbutton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5a741c41-f900-4942-8cd7-55da098bd95d",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "Bbutton",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
