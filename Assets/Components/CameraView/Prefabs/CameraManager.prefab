@@ -262,6 +262,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menu: {fileID: 3744508100037992178}
   imagePrefab: {fileID: 7709393259870508619, guid: 2a50976a1f24dd8098ca2921520cdf15, type: 3}
+  stereoPrefab: {fileID: 8890415464594094642, guid: e9a52148caf70be4e85cf32e41cc89a8, type: 3}
   Count: {fileID: 2783710501849064826}
   untracked: {fileID: 3286163911610860551, guid: d60032fc7bdc8db91b454ee5c68f9105, type: 3}
   tracked: {fileID: 3286163911610860551, guid: 59f25925f06319d02925dc6f372d08c3, type: 3}

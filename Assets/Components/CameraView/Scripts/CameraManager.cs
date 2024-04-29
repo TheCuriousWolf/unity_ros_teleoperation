@@ -9,6 +9,7 @@ public class CameraManager : MonoBehaviour
 {
     public GameObject menu;
     public GameObject imagePrefab;
+    public GameObject stereoPrefab;
     public TMPro.TextMeshProUGUI Count;
     public Sprite untracked;
     public Sprite tracked;
@@ -42,6 +43,15 @@ public class CameraManager : MonoBehaviour
         GameObject img = Instantiate(imagePrefab, transform.position + (transform.right * 0.5f), Quaternion.LookRotation(Camera.main.transform.forward, Vector3.up));
         img.GetComponent<ImageView>().manager = this;
         img.GetComponent<ImageView>()._tracking = _allTracking;
+        imgs.Add(img);
+        Count.text = imgs.Count.ToString();
+    }
+
+    public void AddStereo()
+    {
+        GameObject img = Instantiate(stereoPrefab, transform.position + (transform.right * 0.5f), Quaternion.LookRotation(Camera.main.transform.forward, Vector3.up));
+        img.GetComponent<StereoStreamer>().manager = this;
+        img.GetComponent<StereoStreamer>()._tracking = _allTracking;
         imgs.Add(img);
         Count.text = imgs.Count.ToString();
     }

@@ -9,6 +9,7 @@ Shader "Unlit/StereoStream"
     {
         Tags { "RenderType"="Opaque" }
         LOD 100
+        Cull Off
 
         Pass
         {
@@ -24,6 +25,8 @@ Shader "Unlit/StereoStream"
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
+
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct v2f
@@ -47,6 +50,8 @@ Shader "Unlit/StereoStream"
                 UNITY_INITIALIZE_OUTPUT(v2f, o);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+                o.uv = v.uv;
+
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 UNITY_TRANSFER_FOG(o,o.vertex);
                 return o;
@@ -58,6 +63,7 @@ Shader "Unlit/StereoStream"
 
                 // sample the texture
                 fixed4 col = lerp(tex2D(_LeftTex, i.uv), tex2D(_RightTex, i.uv), unity_StereoEyeIndex);
+                // fixed4 col = tex2D(_LeftTex, i.uv);
 
                 return col;
             }

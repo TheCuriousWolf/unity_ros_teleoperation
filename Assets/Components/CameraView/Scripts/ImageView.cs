@@ -51,17 +51,22 @@ public class ImageView : MonoBehaviour
 
     private Texture2D _texture2D;
 
-    private int _lastSelected = 0;
+    protected int _lastSelected = 0;
 
     public bool _tracking = false;
-    private GameObject _frustrum;
-    private Image _icon;
-    ROSConnection ros;
+    protected GameObject _frustrum;
+    protected Image _icon;
+    protected ROSConnection ros;
 
 
     public bool CleanTF(string name)
     {
         GameObject target = GameObject.Find(name);
+
+        if(target == null)
+        {
+            return false;
+        }
 
         List<GameObject> children = new List<GameObject>();
 
@@ -249,7 +254,7 @@ public class ImageView : MonoBehaviour
         _uiImage.rectTransform.sizeDelta = new Vector2(width,_uiImage.rectTransform.sizeDelta.y);
     }
 
-    void ParseHeader(HeaderMsg header)
+    protected void ParseHeader(HeaderMsg header)
     {
 
         if (_tracking)

@@ -29,6 +29,10 @@ public class StereoStreamerEditor : Editor
         }
         if(GUILayout.Button("Select"))
         {
+            myScript.OnSelect(1);
+        }
+        if(GUILayout.Button("Clear"))
+        {
             myScript.OnSelect(0);
         }
         if(GUILayout.Button("Flip"))
@@ -48,84 +52,22 @@ public class StereoStreamerEditor : Editor
 #endif
 
 
-public class StereoStreamer : MonoBehaviour
+public class StereoStreamer : ImageView
 {
-
-    public Dropdown dropdown;
-    public GameObject topMenu;
-    public CameraManager manager;
-    public TMPro.TextMeshProUGUI name;
-    public Sprite untracked;
-    public Sprite tracked;
-    public string topicName;
     public Material material;
 
     private Texture2D _leftTexture2D;
     private Texture2D _rightTexture2D;
 
-    private int _lastSelected = 0;
+    private Transform _Img;
 
-    public bool _tracking = false;
-    private GameObject _frustrum;
-    private Image _icon;
-
-    ROSConnection ros;
-
-
-    public bool CleanTF(string name)
-    {
-        GameObject target = GameObject.Find(name);
-
-        List<GameObject> children = new List<GameObject>();
-
-        // check if this is connected to root
-        int count = 0;
-        while(target.transform.parent != null)
-        {
-            count++;
-            children.Add(target);
-            target = target.transform.parent.gameObject;
-            if(target.name == "odom")
-            {
-                children.Clear();
-                Debug.Log("Connected to root");
-                return true;
-            }
-            if(count > 100)
-            {
-                Debug.LogError("Looping too much");
-                return false;
-            }
-        }
-
-        foreach(GameObject child in children)
-        {
-            Destroy(child);
-        }
-        return false;
-    }
-
-
-    void UpdatePose(string frame)
-    {
-        if(!CleanTF(frame))
-        {
-            return;
-        }
-        GameObject _parent = GameObject.Find(frame);
-        if(_parent == null) return;
-
-        transform.parent = _parent.transform;
-        transform.localPosition = new Vector3(0.1f, 0.2f, 0);
-        transform.localRotation = Quaternion.Euler(-90, 90, 180);
-        // transform.localScale = new Vector3(-1, 1, 1);
-    }
 
     void Start()
     {
         ros = ROSConnection.GetOrCreateInstance();
 
-        material = GetComponent<MeshRenderer>().material;
+        _Img = transform.Find("Img");
+        material = _Img.GetComponent<MeshRenderer>().material;
 
         dropdown.onValueChanged.AddListener(OnSelect);
 
@@ -137,10 +79,6 @@ public class StereoStreamer : MonoBehaviour
 
         _icon = topMenu.transform.Find("Track/Image/Image").GetComponent<Image>();
         _frustrum = transform.Find("Frustrum").gameObject;
-    }
-
-    private void OnDestroy() {
-        ros.Unsubscribe(topicName);
     }
 
     void UpdateTopics(Dictionary<string, string> topics)
@@ -169,58 +107,32 @@ public class StereoStreamer : MonoBehaviour
         dropdown.value = Mathf.Min(_lastSelected, options.Count - 1);
     }
 
-    public void Clear()
-    {
-        manager.Remove(gameObject);
-    }
-
-    public void ToggleTrack()
-    {
-        _tracking = !_tracking;
-
-        _icon.sprite = _tracking ? tracked : untracked;
-        dropdown.gameObject.SetActive(false);
-        topMenu.SetActive(false);
-    }
-
     public void Flip()
     {
         Debug.Log("Flip not yet implemented");    
     }
 
-    public void ScaleUp()
-    {
-        transform.localScale *= 1.1f;
-    }
-
-    public void ScaleDown()
-    {
-        transform.localScale *= 0.9f;
-    }
-
-    public void OnClick()
-    {
-        ros.GetTopicAndTypeList(UpdateTopics);
-        dropdown.gameObject.SetActive(!dropdown.gameObject.activeSelf);
-        topMenu.gameObject.SetActive(dropdown.gameObject.activeSelf);
-    }
-
     public void OnSelect(int value)
     {
+        Debug.Log("OnSelect");
+
         if (value == _lastSelected) return;
         _lastSelected = value;
+
         if (topicName != null)
             ros.Unsubscribe(topicName);
 
-        name.text = dropdown.options[value].text;
+        name.text = dropdown.options[value].text.Split(' ')[0];
 
         if (value == 0)
         {
             topicName = null;
             // set texture to grey
-            _leftTexture2D = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            _leftTexture2D = new Texture2D(3, 2, TextureFormat.RGBA32, false);
+            material.SetTexture("_LeftTex", _leftTexture2D);
 
-            _rightTexture2D = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            _rightTexture2D = new Texture2D(3, 2, TextureFormat.RGBA32, false);
+            material.SetTexture("_RightTex", _rightTexture2D);
 
             
             dropdown.gameObject.SetActive(false);
@@ -272,37 +184,13 @@ public class StereoStreamer : MonoBehaviour
     void Resize()
     {
         if (_leftTexture2D == null) return;
-
         float aspectRatio = (float)_leftTexture2D.width/(float)_leftTexture2D.height;
-        float height = transform.localScale.y;
-        float width = height * aspectRatio;
+
+        float width = _Img.transform.localScale.x;
+        float height = width / aspectRatio;
+
         
-        transform.localScale = new Vector3(width, height, 1);
-    }
-
-    void ParseHeader(HeaderMsg header)
-    {
-
-        if (_tracking)
-        {
-            // If we are tracking to the TF, update the parent
-            if(header.frame_id != null && (transform.parent == null || header.frame_id != transform.parent.name))
-            {
-                _frustrum.SetActive(true);
-                // If the parent is not the same as the frame_id, update the parent
-                UpdatePose(header.frame_id);
-            }
-
-        } else if (transform.parent != null && transform.parent.name != "odom")
-        {
-            _frustrum.SetActive(false);
-            // Otherwise, set the parent to the odom frame but keep the current position
-            Vector3 pos = transform.position;
-            Quaternion rot = transform.rotation;
-            UpdatePose("odom");
-            transform.position = pos;
-            transform.rotation = rot;
-        }
+        _Img.localScale = new Vector3(width, 1, height);
     }
 
     void OnCompressedLeft(CompressedImageMsg msg)
@@ -313,9 +201,7 @@ public class StereoStreamer : MonoBehaviour
         try
         {
             ImageConversion.LoadImage(_leftTexture2D , msg.data);
-
             _leftTexture2D.Apply();
-
             Resize();
         }
         catch (System.Exception e)
@@ -333,9 +219,7 @@ public class StereoStreamer : MonoBehaviour
         try
         {
             ImageConversion.LoadImage(_rightTexture2D , msg.data);
-
             _rightTexture2D.Apply();
-
             Resize();
         }
         catch (System.Exception e)
