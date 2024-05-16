@@ -1,6 +1,6 @@
 # Unity ROS Teleoperation Project
 
-This repo contains a series of components for Unity XR teleoperation with ROS integration. On the ROS side, the custom [TCP Endpoint](https://github.com/leggedrobotics/ROS-TCP-Endpoint) is needed in the catkin_ws.
+This repo contains a series of components for Unity XR teleoperation with ROS integration. On the ROS side, the custom [TCP Endpoint](https://github.com/leggedrobotics/ROS-TCP-Endpoint) needs to be run from the ROS system. This repo is a Unity project designed to be build for Quest VR headsets. For information on setting up Unity and opening this project [Unity Quickstart](docs/unity.md), and for Quest information see [Quest Quickstart](docs/quest.md).
 
 ## Components
 
