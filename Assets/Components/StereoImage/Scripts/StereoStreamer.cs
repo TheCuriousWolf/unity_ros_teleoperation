@@ -16,39 +16,8 @@ using UnityEngine.UI;
 using UnityEditor;
 
 [CustomEditor(typeof(StereoStreamer))]
-public class StereoStreamerEditor : Editor
-{
-    public override void OnInspectorGUI()
-    {
-        DrawDefaultInspector();
-
-        StereoStreamer myScript = (StereoStreamer)target;
-        if(GUILayout.Button("On click"))
-        {
-            myScript.OnClick();
-        }
-        if(GUILayout.Button("Select"))
-        {
-            myScript.OnSelect(1);
-        }
-        if(GUILayout.Button("Clear"))
-        {
-            myScript.OnSelect(0);
-        }
-        if(GUILayout.Button("Flip"))
-        {
-            myScript.Flip();
-        }
-        if(GUILayout.Button("Scale Up"))
-        {
-            myScript.ScaleUp();
-        }
-        if(GUILayout.Button("Scale Down"))
-        {
-            myScript.ScaleDown();
-        }
-    }
-}
+public class StereoStreamerEditor : ImageViewEditor
+{}
 #endif
 
 
@@ -59,28 +28,13 @@ public class StereoStreamer : ImageView
     private Texture2D _rightTexture2D;
 
 
-
-    void Start()
+    /// <summary>
+    /// Updates the list of the available topics in the dropdown menu
+    /// </summary>
+    /// <param name="topics">Topics from the ROS TCP function</param>
+    protected override void UpdateTopics(Dictionary<string, string> topics)
     {
-        ros = ROSConnection.GetOrCreateInstance();
-
-        _Img = transform.Find("Img");
-        material = _Img.GetComponent<MeshRenderer>().material;
-
-        dropdown.onValueChanged.AddListener(OnSelect);
-
-        dropdown.gameObject.SetActive(false);
-        topMenu.SetActive(false);
-
-        ros.GetTopicAndTypeList(UpdateTopics);
-        name.text = "None";
-
-        _icon = topMenu.transform.Find("Track/Image/Image").GetComponent<Image>();
-        _frustrum = transform.Find("Frustrum").gameObject;
-    }
-
-    void UpdateTopics(Dictionary<string, string> topics)
-    {
+        Debug.Log("Updating topics");
         List<string> options = new List<string>();
         options.Add("None");
         foreach (var topic in topics)
@@ -105,20 +59,24 @@ public class StereoStreamer : ImageView
         dropdown.value = Mathf.Min(_lastSelected, options.Count - 1);
     }
 
+    /// <summary>
+    /// Flips the image horizontally, NOTE: Not yet implemented for stereo images.... (might need to swap left and right as well...)
+    /// </summary>
     public void Flip()
     {
         Debug.Log("Flip not yet implemented");    
     }
 
-    public void OnSelect(int value)
+    public override void OnSelect(int value)
     {
-        Debug.Log("OnSelect");
-
         if (value == _lastSelected) return;
         _lastSelected = value;
 
         if (topicName != null)
+        {
             ros.Unsubscribe(topicName);
+            ros.Unsubscribe(topicName.Replace("left", "right"));
+        }
 
         name.text = dropdown.options[value].text.Split(' ')[0];
 
@@ -131,7 +89,6 @@ public class StereoStreamer : ImageView
 
             _rightTexture2D = new Texture2D(3, 2, TextureFormat.RGBA32, false);
             material.SetTexture("_RightTex", _rightTexture2D);
-
             
             dropdown.gameObject.SetActive(false);
             topMenu.SetActive(false);
@@ -147,6 +104,7 @@ public class StereoStreamer : ImageView
         }
         else
         {
+            Debug.LogError("Only compressed images are supported at the moment");
             // ros.Subscribe<ImageMsg>(topicName, OnImage);
         }
         dropdown.gameObject.SetActive(false);
@@ -154,9 +112,15 @@ public class StereoStreamer : ImageView
 
     }
 
-
-    void SetupTex(int width = 2, int height = 2, bool left = true)
+    /// <summary>
+    /// Sets up the texture for the image or reallocates if the size has changed
+    /// </summary>
+    /// <param name="width">Target width for the new image</param>
+    /// <param name="height">Target height for the new image</param>
+    /// <param name="left">Toggle for whether to operate on the left or right texture</param>
+    private void SetupTex(int width = 2, int height = 2, bool left = true)
     {
+        Debug.Log("Setting up texture");
         if (left)
         {
             if (_leftTexture2D == null || _leftTexture2D.width != width || _leftTexture2D.height != height)
@@ -183,18 +147,25 @@ public class StereoStreamer : ImageView
         }
     }
 
-    void Resize()
+    /// <summary>
+    /// Resize the image object to match the aspect ratio of the image
+    /// </summary>
+    private void Resize()
     {
+        Debug.Log("Resizing");
         if (_leftTexture2D == null) return;
         float aspectRatio = (float)_leftTexture2D.width/(float)_leftTexture2D.height;
 
         float width = _Img.transform.localScale.x;
         float height = width / aspectRatio;
-
         
         _Img.localScale = new Vector3(width, 1, height);
     }
 
+    /// <summary>
+    /// Callback for for left compressed image
+    /// </summary>
+    /// <param name="msg"></param>
     void OnCompressedLeft(CompressedImageMsg msg)
     {
         SetupTex(2,2,true);
@@ -212,7 +183,10 @@ public class StereoStreamer : ImageView
         }
     }
 
-
+    /// <summary>
+    /// Callback for for right compressed image
+    /// </summary>
+    /// <param name="msg"></param>
     void OnCompressedRight(CompressedImageMsg msg)
     {
         SetupTex(2,2,false);
@@ -229,6 +203,5 @@ public class StereoStreamer : ImageView
             Debug.LogError(e);
         }
     }
-
-
 }
+

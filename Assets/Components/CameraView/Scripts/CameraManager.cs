@@ -5,6 +5,38 @@ using TMPro;
 using Unity.Robotics.ROSTCPConnector;
 using UnityEngine.UI;
 
+#if UNITY_EDITOR
+using UnityEditor;
+
+[CustomEditor(typeof(CameraManager))]
+public class CameraManagerEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        CameraManager myScript = (CameraManager)target;
+        if (GUILayout.Button("Add Image"))
+        {
+            myScript.AddImage();
+        }
+        if (GUILayout.Button("Add Stereo"))
+        {
+            myScript.AddStereo();
+        }
+        if (GUILayout.Button("Track All"))
+        {
+            myScript.TrackAll();
+        }
+        if (GUILayout.Button("Clear All"))
+        {
+            myScript.ClearAll();
+        }
+    }
+}
+
+#endif
+
 public class CameraManager : MonoBehaviour
 {
     public GameObject menu;

@@ -128,7 +128,6 @@ public class ImageView : MonoBehaviour
         return false;
     }
 
-
     void UpdatePose(string frame)
     {
         if(!CleanTF(frame))
@@ -167,7 +166,7 @@ public class ImageView : MonoBehaviour
         ros.Unsubscribe(topicName);
     }
 
-    void UpdateTopics(Dictionary<string, string> topics)
+    protected virtual void UpdateTopics(Dictionary<string, string> topics)
     {
         List<string> options = new List<string>();
         options.Add("None");
@@ -180,6 +179,8 @@ public class ImageView : MonoBehaviour
                 options.Add(topic.Key);
             }
         }
+
+        Debug.Log("Found " + options.Count + " image topics");
 
         if(options.Count == 1)
         {
@@ -228,10 +229,12 @@ public class ImageView : MonoBehaviour
         topMenu.gameObject.SetActive(dropdown.gameObject.activeSelf);
     }
 
-    public void OnSelect(int value)
+    public virtual void OnSelect(int value)
     {
         if (value == _lastSelected) return;
+
         _lastSelected = value;
+
         if (topicName != null)
             ros.Unsubscribe(topicName);
 
@@ -260,11 +263,9 @@ public class ImageView : MonoBehaviour
         }
         dropdown.gameObject.SetActive(false);
         topMenu.SetActive(false);
-
     }
 
-
-    void SetupTex(int width = 2, int height = 2)
+    protected virtual void SetupTex(int width = 2, int height = 2)
     {
         if (_texture2D == null)
         {
@@ -275,6 +276,9 @@ public class ImageView : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// For debugging, render the current image to a file
+    /// </summary>
     public void Render()
     {
         // Save the _uiImage rendertexture to a file
@@ -288,24 +292,21 @@ public class ImageView : MonoBehaviour
         
         string filename = name.text.Replace("/", "_");
         System.IO.File.WriteAllBytes(Application.dataPath + "/../" + filename + ".png", bytes);
-
     }
 
-    void Resize()
+    protected virtual void Resize()
     {
         if (_texture2D == null) return;
         float aspectRatio = (float)_texture2D.width/(float)_texture2D.height;
 
         float width = _Img.transform.localScale.x;
         float height = width / aspectRatio;
-
         
         _Img.localScale = new Vector3(width, 1, height);
     }
 
     protected void ParseHeader(HeaderMsg header)
     {
-
         if (_tracking)
         {
             // If we are tracking to the TF, update the parent
@@ -330,6 +331,7 @@ public class ImageView : MonoBehaviour
 
     void OnCompressed(CompressedImageMsg msg)
     {
+        Debug.Log("Compressed image received "+gameObject.name);
         // SetupTex();
         ParseHeader(msg.header);
 
@@ -356,7 +358,6 @@ public class ImageView : MonoBehaviour
 
             Destroy(_input);
 
-
             Resize();
         }
         catch (System.Exception e)
@@ -372,7 +373,6 @@ public class ImageView : MonoBehaviour
 
         try
         {
-
             // _texture2D.LoadRawTextureData(msg.data);
             // _texture2D.Apply();
         }

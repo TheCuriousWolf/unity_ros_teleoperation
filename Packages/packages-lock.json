@@ -154,16 +154,18 @@
       }
     },
     "com.unity.robotics.ros-tcp-connector": {
-      "version": "file:/home/maximum/unity/ROS-TCP-Connector/com.unity.robotics.ros-tcp-connector",
+      "version": "https://github.com/leggedrobotics/ROS-TCP-Connector.git?path=/com.unity.robotics.ros-tcp-connector",
       "depth": 0,
-      "source": "local",
-      "dependencies": {}
+      "source": "git",
+      "dependencies": {},
+      "hash": "4a5b255f369421bfa8e36c958ad8bbbb5320e3d6"
     },
     "com.unity.robotics.visualizations": {
-      "version": "file:/home/maximum/unity/ROS-TCP-Connector/com.unity.robotics.visualizations",
+      "version": "https://github.com/leggedrobotics/ROS-TCP-Connector.git?path=/com.unity.robotics.visualizations",
       "depth": 0,
-      "source": "local",
-      "dependencies": {}
+      "source": "git",
+      "dependencies": {},
+      "hash": "4a5b255f369421bfa8e36c958ad8bbbb5320e3d6"
     },
     "com.unity.searcher": {
       "version": "4.9.2",

@@ -20,7 +20,7 @@ public class SettingsManager : MonoBehaviour
         {
             poseManager = FindObjectOfType<PoseManager>();
         }
-        poseManager.SetLocked(_lockedPose);
+        poseManager?.SetLocked(_lockedPose);
         axisIcon.sprite = _lockedPose ? lockedIcon : unlockedIcon;
 
         _joystickManager = GetComponent<JoystickManager>();
@@ -66,7 +66,7 @@ public class SettingsManager : MonoBehaviour
     public void TogglePoseLock()
     {
         _lockedPose = !_lockedPose;
-        poseManager.SetLocked(_lockedPose);
+        poseManager?.SetLocked(_lockedPose);
         axisIcon.sprite = _lockedPose ? lockedIcon : unlockedIcon;
 
     }

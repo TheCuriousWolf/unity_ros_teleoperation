@@ -3887,7 +3887,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.4279}
+  m_AnchoredPosition: {x: 0, y: 0.42790222}
   m_SizeDelta: {x: 30, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &7496534716540823810
@@ -3935,7 +3935,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 5
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &5230880497370916528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4166,11 +4166,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dropdown: {fileID: 670061393679834295}
   topMenu: {fileID: 8040841155255903590}
-  _uiImage: {fileID: 0}
   manager: {fileID: 0}
   name: {fileID: 3623718738341701378}
   untracked: {fileID: 0}
   tracked: {fileID: 0}
+  debayer: {fileID: 0}
+  material: {fileID: 0}
   topicName: 
   _tracking: 0
-  material: {fileID: 0}
+  debayerType: 3
