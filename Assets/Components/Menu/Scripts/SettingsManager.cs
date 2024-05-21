@@ -14,6 +14,7 @@ public class SettingsManager : MonoBehaviour
 
     private PosePublisher _posePublisher;
     private JoystickManager _joystickManager;
+    private Streamer _streamer;
     void Start()
     {
         if (poseManager == null)
@@ -28,6 +29,23 @@ public class SettingsManager : MonoBehaviour
 
         _posePublisher = GetComponent<PosePublisher>();
         _posePublisher.SetEnabled(false);
+
+        _streamer = FindObjectOfType<Streamer>();
+        if (_streamer == null)
+        {
+            Debug.LogWarning("No Streamer found in scene");
+        } else {
+            _streamer.enabled = false;
+            Debug.Log($"Streaming to topic {_streamer.topic}");
+        }
+    }
+
+    public void ToggleStream()
+    {
+        if(_streamer != null){
+            _streamer.enabled = !_streamer.enabled;
+            Debug.Log("Streamer enabled: " + _streamer.enabled);
+        }
     }
 
     public void ChangeMode(int modes)

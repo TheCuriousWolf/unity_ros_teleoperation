@@ -129,7 +129,15 @@ public class LidarManager : MonoBehaviour
 
         topicDropdown.ClearOptions();
         topicDropdown.AddOptions(topicList);
-        
+
+        if(_lidarClicked)
+        {
+            topicDropdown.value = topicList.IndexOf(_lidarTopic);
+        }
+        else
+        {
+            topicDropdown.value = topicList.IndexOf(_rgbdTopic);
+        }
     }
 
     public void OnLidarClick()
