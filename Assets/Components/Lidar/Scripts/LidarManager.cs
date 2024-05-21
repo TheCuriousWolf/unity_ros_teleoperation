@@ -95,6 +95,10 @@ public class LidarManager : MonoBehaviour
     }
 
     public void OnTopicSelect(int value){
+        if(value == -1)
+        {
+            return;
+        }
         string topic = topicDropdown.options[value].text;
         if(value == 0)
         {
@@ -130,14 +134,14 @@ public class LidarManager : MonoBehaviour
         topicDropdown.ClearOptions();
         topicDropdown.AddOptions(topicList);
 
-        if(_lidarClicked)
-        {
-            topicDropdown.value = topicList.IndexOf(_lidarTopic);
-        }
-        else
-        {
-            topicDropdown.value = topicList.IndexOf(_rgbdTopic);
-        }
+        // if(_lidarClicked)
+        // {
+        //     topicDropdown.value = topicList.IndexOf(_lidarTopic);
+        // }
+        // else
+        // {
+        //     topicDropdown.value = topicList.IndexOf(_rgbdTopic);
+        // }
     }
 
     public void OnLidarClick()
