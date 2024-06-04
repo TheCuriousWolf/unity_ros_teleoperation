@@ -1,16 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 using Bhaptics.SDK2;
+
 
 public class HandManager : MonoBehaviour
 {
 
     public static HandManager Instance { get; private set;}
-    public float duration = 0.5f;
+    public float duration = 0.1f;
+    public Image leftHandImg;
+    public Image rightHandImg;
 
     private bool started = false;
     private long lastTime = 0;
+
+    private bool _hasLeft;
+    private bool _hasRight;
+
     private int[] leftHand;
     private int[] rightHand;
 
@@ -24,12 +33,29 @@ public class HandManager : MonoBehaviour
 
     public void CheckDevices()
     {
-        Debug.Log("PlayRainbow");
         List<HapticDevice> devices = BhapticsLibrary.GetDevices();
+
+        leftHandImg.color = Color.red;
+        rightHandImg.color = Color.red;
+        _hasLeft = false;
+        _hasRight = false;
 
         foreach (HapticDevice device in devices)
         {
-            Debug.Log("Device: " + device.DeviceName);
+            if (device.DeviceName.Contains("(L)") && device.IsConnected)
+            {
+                _hasLeft = true;
+                leftHandImg.color = Color.green;
+            }
+            if (device.DeviceName.Contains("(R)") && device.IsConnected)
+            {
+                _hasRight = true;
+                rightHandImg.color = Color.green;
+            }
+            if(!started)
+            {
+                Debug.Log(device.DeviceName);
+            }
         }
         started = true;
     }
@@ -45,16 +71,21 @@ public class HandManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(started)
+        if(Time.time - lastTime > duration*2)
+            CheckDevices();
+        if(Time.time - lastTime > duration)
         {
-            if(Time.time - lastTime > duration)
+            lastTime = (long)Time.time;
+            if(_hasRight)
             {
-                lastTime = (long)Time.time;
                 BhapticsLibrary.PlayMotors(
                     (int)Bhaptics.SDK2.PositionType.GloveR,
                     rightHand,
                     (int)(1000*duration)
                 );
+            }
+            if(_hasLeft)
+            {
                 BhapticsLibrary.PlayMotors(
                     (int)Bhaptics.SDK2.PositionType.GloveL,
                     leftHand,
@@ -62,6 +93,7 @@ public class HandManager : MonoBehaviour
                 );
             }
         }
+        
         
     }
 

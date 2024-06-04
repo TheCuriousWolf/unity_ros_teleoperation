@@ -31,7 +31,6 @@ public class VariableCollision : MonoBehaviour
     private void OnTriggerStay(Collider other) {
         if (other.isTrigger || other.tag == "hand") return; 
         float distance = Vector3.Distance(other.ClosestPoint(transform.position), transform.position);
-        Debug.Log("Distance: " + distance + " Max: " + _maxDistance);
 
         float value = 1 - distance / _maxDistance;
         value = Mathf.Clamp01(value*value);
