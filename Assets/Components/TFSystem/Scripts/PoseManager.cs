@@ -38,6 +38,7 @@ public class PoseManagerEditor : Editor
 
 public class PoseManager : MonoBehaviour
 {
+    public static PoseManager Instance { get; private set; }
 
     public InputActionReference joystickXY;
     public InputActionReference joystickZR;
@@ -61,6 +62,25 @@ public class PoseManager : MonoBehaviour
     private bool _locked = false;
     private Vector3 _center;
     private Vector3 _forward;
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+            Destroy(this);
+        else
+            Instance = this;
+    }
+
+    public static PoseManager GetOrCreateInstance()
+    {
+        if (Instance == null)
+        {
+            GameObject go = new GameObject();
+            go.name = "PoseManager";
+            return go.AddComponent<PoseManager>();
+        }
+        return Instance;
+    }
 
     void Start()
     {
@@ -100,31 +120,28 @@ public class PoseManager : MonoBehaviour
             BaseToLocation(_center);
         }
 
-        if (action.action.IsPressed())
+        if (action?.action.IsPressed() ?? false)
         {
-            if (alt.action.IsPressed())
+            if (alt?.action.IsPressed() ?? false)
             {
                 ResetScale();
             }
-            else if (actions != null)
+            else
             {
-                actions.Invoke();
+                actions?.Invoke();
             }
         }
 
-        if(bAction.action.IsPressed())
+        if(bAction?.action.IsPressed() ?? false)
         {
-            if (bActions != null)
-            {
-                bActions.Invoke();
-            }
+            bActions?.Invoke();
         }
 
         if(_locked)
             return;
         if (joystickXY.action.IsPressed() || joystickZR.action.IsPressed())
         {
-            if (alt.action.IsPressed())
+            if (alt?.action.IsPressed() ?? false)
                 Scale(joystickXY.action.ReadValue<Vector2>());
             else
                 Move(joystickXY.action.ReadValue<Vector2>());

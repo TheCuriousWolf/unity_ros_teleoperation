@@ -159,6 +159,7 @@ public class LidarDrawer : MonoBehaviour
         // }
         p = GameObject.Find(frame);
         _parent = GameObject.Find(frame);
+        Debug.Log("Parent: " + _parent + " " + frame + " " + p);
         if(_parent == null) {
             // The parent object doesn't exist yet, so we place this object at the origin
             _parent = GameObject.FindWithTag("root");

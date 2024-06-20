@@ -77,7 +77,7 @@ public class HeadsetPublisher : MonoBehaviour
         // tfMsg.transforms[0].transform.translation.z = rootPosition.z;
 
         // Quaternion rootRotation = ;
-        tfMsg.transforms[0].transform.rotation = root.rotation.To<FLU>();
+        tfMsg.transforms[0].transform.rotation = Quaternion.Inverse(root.rotation).To<FLU>();
         // tfMsg.transforms[0].transform.rotation.y = rootRotation.y;
         // tfMsg.transforms[0].transform.rotation.z = rootRotation.z;
         // tfMsg.transforms[0].transform.rotation.w = rootRotation.w;
@@ -90,6 +90,7 @@ public class HeadsetPublisher : MonoBehaviour
         tfMsg.transforms[1].transform = new TransformMsg();
         tfMsg.transforms[1].transform.translation = new Vector3Msg();
         tfMsg.transforms[1].transform.rotation = new QuaternionMsg();
+        tfMsg.transforms[1].transform.rotation.w = 1;
 
 
 

@@ -14,15 +14,18 @@ namespace RosMessageTypes.Haptic
         public override string RosMessageName => k_RosMessageName;
 
         public double intensity;
+        public double force;
 
         public TaxelMsg()
         {
             this.intensity = 0.0;
+            this.force = 0.0;
         }
 
-        public TaxelMsg(double intensity)
+        public TaxelMsg(double intensity, double force)
         {
             this.intensity = intensity;
+            this.force = force;
         }
 
         public static TaxelMsg Deserialize(MessageDeserializer deserializer) => new TaxelMsg(deserializer);
@@ -30,17 +33,20 @@ namespace RosMessageTypes.Haptic
         private TaxelMsg(MessageDeserializer deserializer)
         {
             deserializer.Read(out this.intensity);
+            deserializer.Read(out this.force);
         }
 
         public override void SerializeTo(MessageSerializer serializer)
         {
             serializer.Write(this.intensity);
+            serializer.Write(this.force);
         }
 
         public override string ToString()
         {
             return "TaxelMsg: " +
-            "\nintensity: " + intensity.ToString();
+            "\nintensity: " + intensity.ToString() +
+            "\nforce: " + force.ToString();
         }
 
 #if UNITY_EDITOR

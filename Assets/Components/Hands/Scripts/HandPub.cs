@@ -44,11 +44,8 @@ public class HandPub : MonoBehaviour
     public InputActionReference poseController;
 
 
-    public TextMeshProUGUI jointsText;
-    public TextMeshProUGUI modeText;
-    public TextMeshProUGUI msgText;
-
-    public PoseManager poseManager;
+    public TextMeshProUGUI infoText;
+    private PoseManager poseManager;
 
     ROSConnection ros;
     XRHandSubsystem m_handSubsystem;
@@ -62,6 +59,13 @@ public class HandPub : MonoBehaviour
 
     void Start()
     {
+        poseManager = PoseManager.Instance;
+
+        if(poseManager == null)
+        {
+            Debug.LogError("PoseManager not found!");
+        }
+
         var _handSubsystem = new List<XRHandSubsystem>();
         SubsystemManager.GetSubsystems(_handSubsystem);
         Debug.Log("Found " + _handSubsystem.Count + " hand subsystems");
@@ -112,8 +116,8 @@ public class HandPub : MonoBehaviour
         {
             PubActiveController();
         } else {
-            if(modeText != null)
-                modeText.color = Color.red;
+            if(infoText != null)
+                infoText.color = Color.red;
         }
     }
 
@@ -122,8 +126,8 @@ public class HandPub : MonoBehaviour
         HandGestureMsg msg = new HandGestureMsg();
         msg.name = "Closed_Fist";
         ros.Publish(_gestureTopic, msg);
-        if(modeText != null)
-            modeText.color = Color.green;
+        if(infoText != null)
+            infoText.color = Color.green;
 
     }
 
@@ -133,7 +137,7 @@ public class HandPub : MonoBehaviour
         msg.name = "Thumb_Up";
         ros.Publish(_gestureTopic, msg);
         
-        msgText?.SetText("Twist activated");
+        infoText?.SetText("Twist activated");
     }
 
     public void PubPoseController()
@@ -141,13 +145,13 @@ public class HandPub : MonoBehaviour
         HandGestureMsg msg = new HandGestureMsg();
         msg.name = "Thump_Down";
         ros.Publish(_gestureTopic, msg);
-        msgText?.SetText("Pose activated");
+        infoText?.SetText("Pose activated");
     }
 
     public void ToggleConfidence()
     {
         _highConfidence = !_highConfidence;
-        msgText?.SetText(_highConfidence ? "High Confidence" : "Low Confidence");
+        infoText?.SetText(_highConfidence ? "High Confidence" : "Low Confidence");
     }
 
     void OnHandUpdate(XRHandSubsystem subsystem, 
@@ -182,8 +186,8 @@ public class HandPub : MonoBehaviour
             } else {
                 mode = "Right";
             }
-            if(modeText != null)
-                modeText.SetText(mode + " " + (updateSuccessFlags == 0 ? "Low" : "High"));
+            // if(modeText != null)
+            // infoText?.SetText(mode + " " + (updateSuccessFlags == 0 ? "Low" : "High"));
             
             int count =0;
             foreach (int i in jointMap.Keys)
@@ -221,17 +225,14 @@ public class HandPub : MonoBehaviour
                 }
             }
 
-            if(jointsText != null)
-                jointsText.SetText("Joints: "+count);
+            // if(jointsText != null)
+            //     jointsText.SetText("Joints: "+count);
 
             pointCloudMsg.points = points;
             msg.landmarks = CastPoints(points);
             ros.Publish(_landmarksTopic, msg);
             ros.Publish(_pointCloudTopic, pointCloudMsg);
-        } else {
-            if(modeText != null)
-                modeText.SetText("No Hands!");
-        }
+        } 
     }
 
     public static PointMsg[] CastPoints(Point32Msg[] points)

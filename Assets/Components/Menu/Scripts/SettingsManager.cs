@@ -3,6 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+#if UNITY_EDITOR
+using UnityEditor;
+
+[CustomEditor(typeof(SettingsManager))]
+public class SettingsManagerEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        SettingsManager myScript = (SettingsManager)target;
+        if (GUILayout.Button("Toggle Stream"))
+        {
+            myScript.ToggleStream();
+        }
+        if (GUILayout.Button("Toggle Nvblox"))
+        {
+            myScript.ToggleNvblox();
+        }
+        if (GUILayout.Button("Recenter"))
+        {
+            myScript.Recenter();
+        }
+        if (GUILayout.Button("Toggle Pose Lock"))
+        {
+            myScript.TogglePoseLock();
+        }
+    }
+}
+#endif
+
 public class SettingsManager : MonoBehaviour
 {
     public PoseManager poseManager;
@@ -24,10 +55,7 @@ public class SettingsManager : MonoBehaviour
     private Streamer _streamer;
     void Start()
     {
-        if (poseManager == null)
-        {
-            poseManager = FindObjectOfType<PoseManager>();
-        }
+        poseManager = PoseManager.Instance;
         poseManager?.SetLocked(_lockedPose);
         axisIcon.sprite = _lockedPose ? lockedIcon : unlockedIcon;
 

@@ -12,7 +12,7 @@ public class StatusIndicator : MonoBehaviour
     private Image _image;
     private RawImage _rawImage;
     private bool _connected = false;
-    void Start()
+    void Awake()
     {
         _image = GetComponentInChildren<Image>();
         _rawImage = GetComponent<RawImage>();

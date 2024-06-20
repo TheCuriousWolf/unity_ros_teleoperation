@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   topic: /quest/image
-  enabled: 1
+  enabled: 0
   cameraPrefab: {fileID: 3830774979688079583, guid: fb74b254cffc75426870b77c5bed2156, type: 3}
