@@ -8952,9 +8952,17 @@ PrefabInstance:
     m_TransformParent: {fileID: 1426245650483202958}
     m_Modifications:
     - target: {fileID: 2675780204862606648, guid: 3d95eb51701605804b1c5d9279c82b0a, type: 3}
+      propertyPath: leftHaptic
+      value: 
+      objectReference: {fileID: -343237779369670264, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+    - target: {fileID: 2675780204862606648, guid: 3d95eb51701605804b1c5d9279c82b0a, type: 3}
       propertyPath: leftHandImg
       value: 
       objectReference: {fileID: 5998815924384519486}
+    - target: {fileID: 2675780204862606648, guid: 3d95eb51701605804b1c5d9279c82b0a, type: 3}
+      propertyPath: rightHaptic
+      value: 
+      objectReference: {fileID: 4551707277642791089, guid: c348712bda248c246b8c49b3db54643f, type: 3}
     - target: {fileID: 2675780204862606648, guid: 3d95eb51701605804b1c5d9279c82b0a, type: 3}
       propertyPath: rightHandImg
       value: 
