@@ -497,6 +497,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Haptic",
+                    "type": "PassThrough",
+                    "id": "bc0a5093-3552-42e3-b23f-9d200c6be4d4",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -827,6 +836,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "JoystickClicked",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "539244f9-2859-46f9-a0a7-bcec3d513b49",
+                    "path": "<XRController>{LeftHand}/haptic",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "Haptic",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -1581,6 +1601,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "haptic",
+                    "type": "PassThrough",
+                    "id": "fda6a10e-021b-45dd-b4d0-727501b240fe",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1922,6 +1951,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "JoystickClicked",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bcfe7f8b-ea3d-425e-97bc-7d0b7e2c871e",
+                    "path": "<XRController>{RightHand}/haptic",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "haptic",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

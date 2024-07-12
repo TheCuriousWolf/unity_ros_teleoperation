@@ -8,8 +8,8 @@ This repo contains a series of components for Unity XR teleoperation with ROS in
 | --- | --- | --- | --- |
 | Alma | Full Alma model compatible with Unity and linked to TF syste | [Assets/Components/Alma](Assets/Components/Alma) | Needs mesh clean up |
 | Camera Viewer | Renders a ROS image stream to a floating image window | [Assets/Components/CameraView](Assets/Components/CameraView) | Functional |
-| Hands | Hand tracking and pose publishing over ROS, compatible with Ability hand models | [Assets/Components/Hands](Assets/Components/Hands) | Functional |
-| Haptic | Bhaptic glove support | [Assets/Components/Haptics](Assets/Components/Haptics) | Functional |
+| Hands | Hand tracking and pose publishing over ROS, compatible with Ability hand models | [Assets/Components/Hands](Assets/Components/Hands) | Functional (needs clean up) |
+| Haptic | Bhaptic glove support  plus controller haptics | [Assets/Components/Haptics](Assets/Components/Haptics) | Functional |
 | Headset Publisher | Publishes headset and hand poses on TF and Pose | [Assets/Components/HeadsetPublisher](Assets/Components/HeadsetPublisher) | Functional |
 | Image Renderer | Duplicates pose from a transfrom.json to render an image | [Assets/Components/ImageRenderer](Assets/Components/ImageRenderer) | DEPRECATED |
 | Lidar | GPU rendering for LiDAR and PointCloud2 point viz from ROS | [Assets/Components/Lidar](Assets/Components/Lidar) | Functional |
@@ -148,15 +148,18 @@ In general the scenes should have a few objects by default:
     - Works
 - [x] Palm menu v2
     - Added new menu with more options and better linking
+- [x] Docs
+    - Mostly complete
+- [x] splat streaming
+    - Streams as point cloud 2, currently vized the same as RGBD
+- [x] nerf scene poses fix (rotations are off)
+    - Fixed in TF rewrites
 
-
-- [ ] Docs
+- [ ] Convert to Unity package on github with proper docs/releases
 - [ ] Center around map frame (inverse tf)
 - [ ] New TF manager (singleton)
 - [ ] Switch to UDP
 - [ ] splat quest shader
-- [ ] splat streaming
-- [ ] nerf scene poses fix (rotations are off)
 - [ ] Grab scaler?
 - [ ] Nimbro integration
 
@@ -169,11 +172,11 @@ In general the scenes should have a few objects by default:
         - [x] IP settings
         - [x] Mode settings
         - [ ] Inverted controls
-    - [ ] Smaller model
+    - [x] Smaller model
     - [ ] Table spawner
     - [ ] Spherical orbit
     - [x] fix jumps on lock
     - [ ] Recenter on reconnect
     - [x] Enable move unlock at start + point and click
     - [ ] speed settings
-    - [ ] Scene state saver
+    - [x] Scene state saver

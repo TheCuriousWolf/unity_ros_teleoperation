@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using UnityEngine.XR.OpenXR.Input;
+using UnityEngine.InputSystem.XR;
 
 using Bhaptics.SDK2;
 
@@ -10,6 +13,10 @@ public class HandManager : MonoBehaviour
 {
 
     public static HandManager Instance { get; private set;}
+
+    public InputActionReference leftHaptic;
+    public InputActionReference rightHaptic;
+
     public float duration = 0.1f;
     public Image leftHandImg;
     public Image rightHandImg;
@@ -21,7 +28,10 @@ public class HandManager : MonoBehaviour
     private bool _hasRight;
 
     private int[] leftHand;
-    public int[] rightHand;
+    private int[] rightHand;
+
+    private XRController leftController;
+    private XRController rightController;
 
     private void Awake()
     {
@@ -60,13 +70,13 @@ public class HandManager : MonoBehaviour
                 Debug.Log(device.DeviceName + " is connected: " + device.IsConnected);
             }
         }
+
         started = true;
     }
     // Start is called before the first frame update
     void Start()
     {
         CheckDevices();
-        
     }
 
     // Update is called once per frame
@@ -77,6 +87,26 @@ public class HandManager : MonoBehaviour
         if(Time.time - lastTime > duration)
         {
             lastTime = (long)Time.time;
+
+            float maxRight = Mathf.Max(rightHand)/100f;
+            float maxLeft = Mathf.Max(leftHand)/100f;
+
+            if(DebugLogger.active){
+                leftHandImg.color = DebugLogger.debugGradient.Evaluate(maxLeft);
+                rightHandImg.color = DebugLogger.debugGradient.Evaluate(maxRight);               
+            }
+
+            if(maxRight > 0)
+            {
+                OpenXRInput.SendHapticImpulse(rightHaptic, maxRight, duration, UnityEngine.InputSystem.XR.XRController.rightHand);
+            }
+            if(maxLeft > 0)
+            {
+                OpenXRInput.SendHapticImpulse(leftHaptic, maxLeft, duration, UnityEngine.InputSystem.XR.XRController.leftHand);
+            }
+
+
+
             if(_hasRight)
             {
                 BhapticsLibrary.PlayMotors(

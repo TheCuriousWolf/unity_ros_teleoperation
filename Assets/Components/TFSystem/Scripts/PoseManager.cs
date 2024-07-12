@@ -65,20 +65,21 @@ public class PoseManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance != null && Instance != this)
-            Destroy(this);
-        else
-            Instance = this;
+        // if (Instance != null && Instance != this)
+        //     Destroy(this);
+        // else
+        //     Instance = this;
+        Instance = this;
     }
 
     public static PoseManager GetOrCreateInstance()
     {
-        if (Instance == null)
-        {
-            GameObject go = new GameObject();
-            go.name = "PoseManager";
-            return go.AddComponent<PoseManager>();
-        }
+        // if (Instance == null)
+        // {
+        //     GameObject go = new GameObject();
+        //     go.name = "PoseManager";
+        //     return go.AddComponent<PoseManager>();
+        // }
         return Instance;
     }
 
@@ -97,11 +98,12 @@ public class PoseManager : MonoBehaviour
             Debug.LogWarning("PoseManager: actions set but action not set");
         }
 
-        _robot = GameObject.FindWithTag("robot").transform;
+        GameObject robot = GameObject.FindWithTag("robot");
+
         if (_robot == null)
-        {
-            Debug.LogWarning("PoseManager: robot not found");
-        }
+            Debug.LogWarning("PoseManager: robot not found");        
+        else
+            _robot = robot.transform;
 
     }
 

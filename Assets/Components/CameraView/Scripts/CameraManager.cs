@@ -162,7 +162,6 @@ public class CameraManager : MonoBehaviour
         ClearAll();
 
         ImageManagerData imgData = JsonUtility.FromJson<ImageManagerData>(data);
-        Debug.Log(imgData.data.Length);
 
         foreach (string d in imgData.data)
         {

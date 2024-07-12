@@ -9036,7 +9036,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f69f6bf0e35983b73a1c57544a1127c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topicName: /haptics
+  topicName: /quest/haptics
 --- !u!4 &8343064305588532468 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4725381964907239903, guid: 3d95eb51701605804b1c5d9279c82b0a, type: 3}
@@ -10311,7 +10311,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5016077939771438845, guid: 779d8cdef64feca43b204c458230f838, type: 3}
       propertyPath: vizType
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 5016077939771438845, guid: 779d8cdef64feca43b204c458230f838, type: 3}
       propertyPath: displayPts
@@ -10571,6 +10571,10 @@ PrefabInstance:
     - target: {fileID: 5016077939771438845, guid: 779d8cdef64feca43b204c458230f838, type: 3}
       propertyPath: maxPts
       value: 50000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5016077939771438845, guid: 779d8cdef64feca43b204c458230f838, type: 3}
+      propertyPath: vizType
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 5016077939771438845, guid: 779d8cdef64feca43b204c458230f838, type: 3}
       propertyPath: displayPts

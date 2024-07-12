@@ -24,6 +24,7 @@ public class DebugLoggerEditor : Editor
 public class DebugLogger : MonoBehaviour
 {
     public static bool active = true;
+    public static Gradient debugGradient = new Gradient();
     public int qsize = 150;  // number of messages to keep
     public bool startActive = false;
 
@@ -48,10 +49,18 @@ public class DebugLogger : MonoBehaviour
     }
 
     void OnAwake(){
+        var colors = new GradientColorKey[2];
+        colors[0] = new GradientColorKey(Color.red, 0.0f);
+        colors[1] = new GradientColorKey(Color.green, 1.0f);
+        var alphas = new GradientAlphaKey[2];
+        alphas[0] = new GradientAlphaKey(1.0f, 0.0f);
+        alphas[1] = new GradientAlphaKey(1.0f, 1.0f);
+        debugGradient.SetKeys(colors, alphas);
     }
 
     public void ToggleDebugMode(){
         text.gameObject.SetActive(!text.gameObject.activeSelf);
+        active = text.gameObject.activeSelf;
     }
 
 
