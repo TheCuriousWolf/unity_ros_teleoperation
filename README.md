@@ -4,25 +4,25 @@ This repo contains a series of components for Unity XR teleoperation with ROS in
 
 ## Components
 
-| Component | Description | Location | Status |
-| --- | --- | --- | --- |
-| Alma | Full Alma model compatible with Unity and linked to TF syste | [Assets/Components/Alma](Assets/Components/Alma) | Needs mesh clean up |
-| Camera Viewer | Renders a ROS image stream to a floating image window | [Assets/Components/CameraView](Assets/Components/CameraView) | Functional |
-| Hands | Hand tracking and pose publishing over ROS, compatible with Ability hand models | [Assets/Components/Hands](Assets/Components/Hands) | Functional (needs clean up) |
-| Haptic | Bhaptic glove support  plus controller haptics | [Assets/Components/Haptics](Assets/Components/Haptics) | Functional |
-| Headset Publisher | Publishes headset and hand poses on TF and Pose | [Assets/Components/HeadsetPublisher](Assets/Components/HeadsetPublisher) | Functional |
-| Image Renderer | Duplicates pose from a transfrom.json to render an image | [Assets/Components/ImageRenderer](Assets/Components/ImageRenderer) | DEPRECATED |
-| Lidar | GPU rendering for LiDAR and PointCloud2 point viz from ROS | [Assets/Components/Lidar](Assets/Components/Lidar) | Functional |
-| Menu | Palm menu for interaction and toggling | [Assets/Components/Menu](Assets/Components/Menu) | Functional |
-| NeRFViewer | Handheld viewer for rendering NeRFs and scene interaction | [Assets/Components/NeRFViewer](Assets/Components/NeRFViewer) | Functional (needs updates) |
-| PosePublisher | Publishes a pose from select and drag interaction and publishes as a ActiveMission for Alma locomotion | [Assets/Components/PosePublisher](Assets/Components/PosePublisher) | Functional |
-| Robots | WiP will contain ALMA, dynaarm, panda and other robot models | [Assets/Components/Robots](Assets/Components/Robots) | Incomplete |
-| Splat | 3D viewer for Gaussian Splats | [Assets/Components/Splat](Assets/Components/Splat) | Incomplete |
-| Stereo | Stereo camera rendering, renders to each eye for human depth perception | [Assets/Components/StereoImage](Assets/Components/StereoImage) | Functional |
-| TF | WiP new TF system for managing robots and reorientation | [Assets/Components/TFSystem](Assets/Components/TFSystem) | Incomplete |
-| Voxblox | Voxel mesh rendering | [Assets/Components/VoxBlox](Assets/Components/VoxBlox) | Functional |
-| VR Debug | Debugging tools for VR, namely a console | [Assets/Components/VRDebug](Assets/Components/VRDebug) | Functional |
-| VR Streamer | Streams a the VR view to a ROS topic (w/o AR view) | [Assets/Components/VRStreamer](Assets/Components/VRStreamer) | Functional |
+| Component | Description | Location | Preview | Status |
+| --- | --- | --- | --- | --- |
+| Alma | Full Alma model compatible with Unity and linked to TF system | [Assets/Components/Alma](Assets/Components/Alma) | ![](/docs/images/models.png) | Needs mesh clean up |
+| Camera Viewer | Renders a ROS image stream to a floating image window | [Assets/Components/CameraView](Assets/Components/CameraView) | ![](/docs/images/cam.gif) | Functional |
+| Hands | Hand tracking and pose publishing over ROS, compatible with Ability hand models | [Assets/Components/Hands](Assets/Components/Hands) | ![](/docs/images/hands.gif) | Functional |
+| Haptic | Bhaptic glove support  plus controller haptics | [Assets/Components/Haptics](Assets/Components/Haptics) | ![](/docs/images/haptics.gif) | Functional |
+| Headset Publisher | Publishes headset and hand poses on TF and Pose | [Assets/Components/HeadsetPublisher](Assets/Components/HeadsetPublisher) | ![](/docs/images/tf.gif) | Functional |
+| Image Renderer | Duplicates pose from a transfrom.json to render an image | [Assets/Components/ImageRenderer](Assets/Components/ImageRenderer) | ![]() | DEPRECATED |
+| Lidar | GPU rendering for LiDAR and PointCloud2 point viz from ROS | [Assets/Components/Lidar](Assets/Components/Lidar) | ![](/docs/images/lidar.gif) | Functional |
+| Menu | Palm menu for interaction and toggling | [Assets/Components/Menu](Assets/Components/Menu) | ![](/docs/images/menu.gif) | Functional |
+| NeRFViewer | Handheld viewer for rendering NeRFs and scene interaction | [Assets/Components/NeRFViewer](Assets/Components/NeRFViewer) | ![](/docs/images/nerf.gif) | Functional (needs updates) |
+| PosePublisher | Publishes a pose from select and drag interaction and publishes as a ActiveMission for Alma locomotion | [Assets/Components/PosePublisher](Assets/Components/PosePublisher) | ![](/docs/images/posegoals.gif) | Functional |
+| Robots | WiP will contain ALMA, dynaarm, panda and other robot models | [Assets/Components/Robots](Assets/Components/Robots) | ![](/docs/images/robots.gif) | Incomplete |
+| Splat | 3D viewer for Gaussian Splats | [Assets/Components/Splat](Assets/Components/Splat) | ![](/docs/images/splat.gif) | Incomplete |
+| Stereo | Stereo camera rendering, renders to each eye for human depth perception | [Assets/Components/StereoImage](Assets/Components/StereoImage) | ![](/docs/images/stereo.gif) | Functional |
+| TF | WiP new TF system for managing robots and reorientation | [Assets/Components/TFSystem](Assets/Components/TFSystem) | ![](/docs/images/tf.gif) | Incomplete |
+| Voxblox | Voxel mesh rendering | [Assets/Components/VoxBlox](Assets/Components/VoxBlox) | ![](/docs/images/voxblox.gif) | Functional |
+| VR Debug | Debugging tools for VR, namely a console | [Assets/Components/VRDebug](Assets/Components/VRDebug) | ![](/docs/images/vr_debugger.png) | Functional |
+| VR Streamer | Streams a the VR view to a ROS topic (w/o AR view) | [Assets/Components/VRStreamer](Assets/Components/VRStreamer) | ![](/docs/images/streamer.gif) | Functional |
 
 
 
