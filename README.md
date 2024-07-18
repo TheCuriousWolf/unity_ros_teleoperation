@@ -8,7 +8,7 @@ This repo contains a series of components for Unity XR teleoperation with ROS in
 | --- | --- | --- | --- | --- |
 | Alma | Full Alma model compatible with Unity and linked to TF system | [Assets/Components/Alma](Assets/Components/Alma) | ![](/docs/images/models.png) | Needs mesh clean up |
 | Camera Viewer | Renders a ROS image stream to a floating image window | [Assets/Components/CameraView](Assets/Components/CameraView) | ![](/docs/images/cam.gif) | Functional |
-| Hands | Hand tracking and pose publishing over ROS, compatible with Ability hand models | [Assets/Components/Hands](Assets/Components/Hands) | ![](/docs/images/hands.gif) | Functional |
+| Hands | Hand tracking and pose publishing over ROS, compatible with Ability hand models | [Assets/Components/Hands](Assets/Components/Hands) | ![](/docs/images/hands.gif){width=200px} | Functional |
 | Haptic | Bhaptic glove support  plus controller haptics | [Assets/Components/Haptics](Assets/Components/Haptics) | ![](/docs/images/haptics.gif) | Functional |
 | Headset Publisher | Publishes headset and hand poses on TF and Pose | [Assets/Components/HeadsetPublisher](Assets/Components/HeadsetPublisher) | ![](/docs/images/tf.gif) | Functional |
 | Image Renderer | Duplicates pose from a transfrom.json to render an image | [Assets/Components/ImageRenderer](Assets/Components/ImageRenderer) | ![]() | DEPRECATED |
