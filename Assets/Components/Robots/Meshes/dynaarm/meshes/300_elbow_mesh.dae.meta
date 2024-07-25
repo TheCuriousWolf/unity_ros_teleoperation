@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c0fb2755fe429951a948bb70b89d3b00
+guid: 867fad4de3d1098eab47221ccdc51c7b
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,33 +7,28 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material
-    second: {fileID: 2100000, guid: d8fdc28cdd65fb287861ccf7292fac60, type: 2}
+      name: Material.012
+    second: {fileID: 2100000, guid: 8b527e8232ff269adb37b559e3c7bd41, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material.001
-    second: {fileID: 2100000, guid: 40248dad6f7a0bc6b8cb8809366d3ab6, type: 2}
+      name: Material.013
+    second: {fileID: 2100000, guid: 48af2e4a2010d8c1b9cc196a15bba7c2, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material.002
-    second: {fileID: 2100000, guid: 7780c087292dc67edb7d583777a69013, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.005
+      name: Material.014
     second: {fileID: 2100000, guid: cd70674c8f8052539b053eea6ea08918, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material.006
-    second: {fileID: 2100000, guid: fcd82a0ed386239e0b94239b0afb74a0, type: 2}
+      name: Material.015
+    second: {fileID: 2100000, guid: 8b527e8232ff269adb37b559e3c7bd41, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material.007
-    second: {fileID: 2100000, guid: 8b527e8232ff269adb37b559e3c7bd41, type: 2}
+      name: Material.016
+    second: {fileID: 2100000, guid: cd70674c8f8052539b053eea6ea08918, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -66,7 +61,7 @@ ModelImporter:
   meshes:
     lODScreenPercentages: []
     globalScale: 1
-    meshCompression: 3
+    meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
