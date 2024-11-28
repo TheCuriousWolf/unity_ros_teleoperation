@@ -224,22 +224,6 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2901029077189474422, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
-      propertyPath: m_Name
-      value: ElevationMap
-      objectReference: {fileID: 0}
-    - target: {fileID: 2923282960450811557, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
-      propertyPath: m_TargetGraphic
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3808030644512553841, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 3286163911610860551, guid: 314754d16bc46654883a3157b06abd77, type: 3}
-    - target: {fileID: 4788897041477323845, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
-      propertyPath: MenuState.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 5213991793620426796, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -259,10 +243,6 @@ PrefabInstance:
     - target: {fileID: 5213991794325143589, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
       propertyPath: m_AnchorMin.x
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7302698467839699370, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ToggleGridMap
       objectReference: {fileID: 0}
     - target: {fileID: 8605111556703751387, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
       propertyPath: m_Name
