@@ -7,6 +7,7 @@ using RosMessageTypes.Geometry;
 using RosMessageTypes.Tf2;
 using RosMessageTypes.Std;
 using Unity.Robotics.ROSTCPConnector.ROSGeometry;
+using TMPro;
 
 
 public class HeadsetPublisher : MonoBehaviour
@@ -15,6 +16,7 @@ public class HeadsetPublisher : MonoBehaviour
     public string headsetFrame = "headset";
     public string handFrameLeft = "hand_left";
     public string poseTopic = "/quest/pose";
+    public TextMeshProUGUI decimatorText;
 
     public InputActionReference headsetPose;
     public InputActionReference headsetRotation;
@@ -35,6 +37,8 @@ public class HeadsetPublisher : MonoBehaviour
     private HeaderMsg odomHeader;
 
     private string rootFrame;
+    private int _decimator = 1;
+    private int _frameCounter = 0;
 
     void Awake()
     {
@@ -67,10 +71,19 @@ public class HeadsetPublisher : MonoBehaviour
 
         tfMsg = new TFMessageMsg(); 
 
+        decimatorText.text = "TF Decimator: " + _decimator;
+
     }
 
     void Update()
     {
+        // For better performance we can choose to only publish every nth frame
+        _frameCounter++;
+        if (_frameCounter % _decimator != 0)
+            return;
+
+        _frameCounter = 0;
+
 
         // TF publishing (preferred means of poses, but sometimes weird with timing)
         tfMsg.transforms = new TransformStampedMsg[4];
@@ -134,5 +147,11 @@ public class HeadsetPublisher : MonoBehaviour
         ros.Publish(poseTopic+"/headset", headsetPoseMsg);
 
         ros.Publish("/tf", tfMsg);
+    }
+
+    public void OnDecimatorChange(float value)
+    {
+        _decimator = (int)value;
+        decimatorText.text = "TF Decimator: " + _decimator;
     }
 }
