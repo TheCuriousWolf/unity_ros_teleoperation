@@ -34,7 +34,7 @@ Shader "Unlit/Lidar"
             };
 
             StructuredBuffer<float3> _Positions;
-            StructuredBuffer<lidardata> _LidarData;
+            StructuredBuffer<lidardata> _PointData;
 
             uniform uint _BaseVertexIndex;
             uniform float _PointSize;
@@ -45,13 +45,13 @@ Shader "Unlit/Lidar"
             v2f vert (uint vertexID: SV_VertexID, uint instanceID: SV_InstanceID)
             {
                 v2f o;
-                float3 pos = _LidarData[instanceID].position;
+                float3 pos = _PointData[instanceID].position;
                 float2 uv = _Positions[_BaseVertexIndex + vertexID] * _PointSize;
                 uv /= float2(_ScreenParams.x/_ScreenParams.y, 1);
                 float4 wpos = mul(_ObjectToWorld, float4(pos, 1.0f));
 
                 o.pos = UnityObjectToClipPos(wpos) + float4(uv,0,0);
-                o.color = lerp(_ColorMin, _ColorMax, _LidarData[instanceID].intensity);
+                o.color = lerp(_ColorMin, _ColorMax, _PointData[instanceID].intensity);
                 return o;
             }
 

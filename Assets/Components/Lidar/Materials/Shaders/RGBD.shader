@@ -14,6 +14,7 @@ Shader "Unlit/RGBD"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
+            #include "Assets/Components/Lidar/Materials/Shaders/PointHelper.cginc"
 
 
             struct v2f
@@ -28,21 +29,10 @@ Shader "Unlit/RGBD"
                 int color;
             };
 
-            float4 UnpackRGBA(int rgba)
-            {
-                int4 unpackedColor;
-                int unpacked = rgba;
-                
-                unpackedColor.r = unpacked >> 16 & 0xFF;
-                unpackedColor.g = unpacked >> 8 & 0xFF;
-                unpackedColor.b = unpacked & 0xFF;
-                unpackedColor.a = 255;
-
-                return unpackedColor / 255.0f;
-            }
+            
 
             StructuredBuffer<float3> _Positions;
-            StructuredBuffer<lidardata> _LidarData;
+            StructuredBuffer<lidardata> _PointData;
 
             uniform uint _BaseVertexIndex;
             uniform float _PointSize;
@@ -55,12 +45,12 @@ Shader "Unlit/RGBD"
             v2f vert (uint vertexID: SV_VertexID, uint instanceID: SV_InstanceID)
             {
                 v2f o;
-                float3 pos = _LidarData[instanceID].position;
+                float3 pos = _PointData[instanceID].position;
                 float2 uv = _Positions[_BaseVertexIndex + vertexID] * _PointSize;
                 uv /= float2(_ScreenParams.x/_ScreenParams.y, 1);
                 float4 wpos = mul(_ObjectToWorld, float4(pos, 1.0f));
                 o.pos = mul(UNITY_MATRIX_VP, wpos) + float4(uv,0,0);
-                o.color = UnpackRGBA(_LidarData[instanceID].color);
+                o.color = UnpackRGBA(_PointData[instanceID].color);
                 return o;
             }
 

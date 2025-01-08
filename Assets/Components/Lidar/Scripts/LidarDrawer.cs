@@ -24,24 +24,47 @@ public class LidarDrawerEditor : Editor
     }
 }
 #endif
+
+
+
 public enum VizType
 {
-    Lidar = 4 * 4,
-    RGBD = 4 * 6,
-    RGBDMesh = 4 * 6 + 1,
-    Splat = 4 * 18
+    Lidar = 0,
+    RGBDMesh = 1,
+    RGBD = 2,
+    Splat = 4,
+}
 
+public static class VizTypeExtensions
+{
+    public static int GetFieldCount(this VizType vizType)
+    {
+        switch (vizType)
+        {
+            case VizType.Lidar:
+            case VizType.RGBD:
+                return 4;
+            case VizType.RGBDMesh:
+                return 5;
+            case VizType.Splat:
+                return 18;
+            default:
+                return 4;
+        }
+    }
+
+    public static int GetSize(this VizType vizType)
+    {
+        return vizType.GetFieldCount() * 4;
+    }
 }
 
 public class LidarDrawer : MonoBehaviour
 {
-
-
     public Material lidar_material;
-    public Material rgbd_material;
+    public Material rgbd_material; 
     public Material rgbd_mesh_material;
     public Material splat_material;
-
 
 
     GraphicsBuffer _meshTriangles;
@@ -56,7 +79,6 @@ public class LidarDrawer : MonoBehaviour
     public string topic = "/lidar/point_cloud";
     public VizType vizType = VizType.Lidar;
 
-    private int _LidarDataSize = 4 * 4;
     private ROSConnection _ros;
     private Mesh mesh;
     private LidarSpawner _lidarSpawner;
@@ -75,18 +97,13 @@ public class LidarDrawer : MonoBehaviour
     {
         _ros = ROSConnection.GetOrCreateInstance();
 
-        _LidarDataSize = (int)vizType;
-        if (_LidarDataSize % 2 == 1) // In case we are rgbdmesh
-        {
-            _LidarDataSize -= 1;
-        }
         mesh = LidarUtils.MakePolygon(sides);
 
         _meshTriangles = new GraphicsBuffer(GraphicsBuffer.Target.Structured, mesh.triangles.Length, 4);
         _meshTriangles.SetData(mesh.triangles);
         _meshVertices = new GraphicsBuffer(GraphicsBuffer.Target.Structured, mesh.vertices.Length, 12);
         _meshVertices.SetData(mesh.vertices);
-        _ptData = new GraphicsBuffer(GraphicsBuffer.Target.Structured, maxPts, 4*4);
+        _ptData = new GraphicsBuffer(GraphicsBuffer.Target.Structured, maxPts, vizType.GetSize());
 
         switch (vizType)
         {
@@ -109,7 +126,7 @@ public class LidarDrawer : MonoBehaviour
 
         renderParams.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 0, 0)));
         renderParams.matProps.SetFloat("_PointSize", scale);
-        renderParams.matProps.SetBuffer("_LidarData", _ptData);
+        renderParams.matProps.SetBuffer("_PointData", _ptData);
         renderParams.matProps.SetInt("_BaseVertexIndex", (int)mesh.GetBaseVertex(0));
         renderParams.matProps.SetBuffer("_Positions", _meshVertices);
 
@@ -197,6 +214,10 @@ public class LidarDrawer : MonoBehaviour
         {
             displayPts = maxPts;
         }
+        if (displayPts < 0)
+        {
+            displayPts = 0;
+        }
     }
 
     private void OnDestroy()
@@ -222,7 +243,7 @@ public class LidarDrawer : MonoBehaviour
     {
         if (_parent == null || _parent.name != pointCloud.header.frame_id)
         {
-            UpdatePose(pointCloud.header.frame_id);
+            // UpdatePose(pointCloud.header.frame_id);
         }
         if (pointCloud.data.Length == 0) return;
 
@@ -230,17 +251,8 @@ public class LidarDrawer : MonoBehaviour
         uint point_step = pointCloud.point_step;
         // Debug.Log("Fields: " + fields + " Point Step: " + point_step);
 
-        if(vizType == VizType.RGBD)
-        {
-            vizType = VizType.Lidar;
-        }
 
-        if(splatUtils )
-        {
-            _ptData.SetData(SplatUtils.ExtractData(pointCloud, displayPts, vizType, out _numPts));
-        } else {
-            _ptData.SetData(LidarUtils.ExtractXYZI(pointCloud, displayPts, vizType, out _numPts));
-        }
+        _ptData.SetData(LidarUtils.ExtractData(pointCloud, displayPts, vizType, out _numPts));
     }
 
     public void OnTopicChange(string topic)
