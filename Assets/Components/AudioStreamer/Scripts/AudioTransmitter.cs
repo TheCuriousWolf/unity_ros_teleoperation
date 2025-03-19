@@ -14,6 +14,7 @@ public class AudioTransmitter : MonoBehaviour
     private List<float> audioBuffer = new List<float>();
     private int pos = 0;
     private int lastPos = 0;
+    public bool isActive = true;
 
     float[] audioSample;
     // Start is called before the first frame update
@@ -35,10 +36,11 @@ public class AudioTransmitter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
-        GetMicrophoneData();
-        PublishAudioData();
-
+       if (isActive)
+        {
+            GetMicrophoneData();
+            PublishAudioData();
+        }
     }
 
     // Get audio data from the microphone
@@ -93,13 +95,8 @@ public class AudioTransmitter : MonoBehaviour
         }
     }
 
-
-    // OnDestroy is called when the object is being destroyed
-    void OnDestroy()
+    public void toggleMic()
     {
-        if (ros != null)
-        {
-            ros.Disconnect();
-        }
+        isActive = !isActive;
     }
 }

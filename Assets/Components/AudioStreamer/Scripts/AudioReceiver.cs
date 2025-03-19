@@ -18,7 +18,12 @@ public class AudioReceiver : MonoBehaviour
     private int sampleRate = 16000;
     private int channelCount = 1;
     private AudioClip clip;
+    public bool isActive = true;
 
+    public void toggleSpeaker()
+    {
+       isActive = !isActive;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -39,7 +44,8 @@ public class AudioReceiver : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {   
+ 
         if (audioBuffer.Count > bufferSize/2 && !audioSource.isPlaying)
         {
             PlayBufferedAudio();
@@ -50,20 +56,23 @@ public class AudioReceiver : MonoBehaviour
    
     // Callback function for receiving audio data
     void ReceiveAudioMessage(AudioDataMsg msg)
-    {
-        byte[] byteData = msg.data;
-        float[] floatData = new float[byteData.Length / 2];
-        for (int i = 0; i < floatData.Length; i += 1)
+    {       
+        if (isActive)
         {
-            short sample = (short)(byteData[i * 2] | (byteData[i * 2 + 1] << 8));
-            floatData[i] = sample / 32768.0f;
-        }
-
-        lock (audioBuffer)
-        {
-            foreach (var sample in floatData)
+            byte[] byteData = msg.data;
+            float[] floatData = new float[byteData.Length / 2];
+            for (int i = 0; i < floatData.Length; i += 1)
             {
-                audioBuffer.Add(sample);
+                short sample = (short)(byteData[i * 2] | (byteData[i * 2 + 1] << 8));
+                floatData[i] = sample / 32768.0f;
+            }
+
+            lock (audioBuffer)
+            {
+                foreach (var sample in floatData)
+                {
+                    audioBuffer.Add(sample);
+                }
             }
         }
     }
@@ -90,7 +99,6 @@ public class AudioReceiver : MonoBehaviour
         if (ros != null)
         {   
             ros.Unsubscribe(audioDataTopic);
-            ros.Disconnect();
         }
     }
 }
