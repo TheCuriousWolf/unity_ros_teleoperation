@@ -265,6 +265,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1254451252382387061, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1254451253019847548, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2888525264618850335, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2888525265256343574, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5213991793620426796, guid: 284c18ecc4f72ec20968371b116bf40b, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -853,6 +869,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1185d37376fa7ac79a90d08b59b34f6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  manager: {fileID: 0}
   lidar_material: {fileID: 2100000, guid: cff58e95e3efb7ea995ef3989b51e681, type: 2}
   rgbd_material: {fileID: 2100000, guid: b010de748c08a6d40b3f631265381ff6, type: 2}
   rgbd_mesh_material: {fileID: 0}
@@ -863,8 +880,10 @@ MonoBehaviour:
   sides: 3
   topic: /camera/depth/color/points
   vizType: 0
+  debugText: {fileID: 0}
   _enabled: 0
   _parent: {fileID: 0}
+  _numPts: 0
   p: {fileID: 0}
 --- !u!114 &2084164025
 MonoBehaviour:

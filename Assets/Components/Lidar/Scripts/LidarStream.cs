@@ -10,15 +10,15 @@ using TMPro;
 #if UNITY_EDITOR
 using UnityEditor;
 
-[CustomEditor(typeof(LidarDrawer))]
-public class LidarDrawerEditor : Editor
+[CustomEditor(typeof(LidarStream))]
+public class LidarStreamEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
         
 
-        LidarDrawer myScript = (LidarDrawer)target;
+        LidarStream myScript = (LidarStream)target;
         if(GUILayout.Button("Toggle Enabled"))
         {
             myScript.ToggleEnabled();
@@ -62,7 +62,7 @@ public static class VizTypeExtensions
     }
 }
 
-public class LidarDrawer : MonoBehaviour
+public class LidarStream : SensorStream
 {
     public Material lidar_material;
     public Material rgbd_material; 
@@ -305,5 +305,18 @@ public class LidarDrawer : MonoBehaviour
         }
     }
 
+    public override void ToggleTrack(int mode)
+    {
+        throw new System.NotImplementedException();
+    }
 
+    public override string Serialize()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void Deserialize(string data)
+    {
+        throw new System.NotImplementedException();
+    }
 }
