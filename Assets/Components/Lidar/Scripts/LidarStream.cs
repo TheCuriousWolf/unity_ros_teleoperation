@@ -5,6 +5,7 @@ using RosMessageTypes.Sensor;
 using RosMessageTypes.Std;
 using Unity.Robotics.ROSTCPConnector;
 using TMPro;
+using UnityEngine.Rendering;
 
 
 #if UNITY_EDITOR
@@ -62,12 +63,22 @@ public static class VizTypeExtensions
     }
 }
 
+[System.Serializable]
+public class PointData : ISensorData
+{
+
+}
+
+
 public class LidarStream : SensorStream
 {
     public Material lidar_material;
     public Material rgbd_material; 
     public Material rgbd_mesh_material;
     public Material splat_material;
+    
+
+    public Material point_material;
 
 
     GraphicsBuffer _meshTriangles;
@@ -82,6 +93,10 @@ public class LidarStream : SensorStream
     public string topic = "/lidar/point_cloud";
     public VizType vizType = VizType.Lidar;
 
+    public VizType viz2 = VizType.Lidar;
+    public Color intensityMin = Color.black;
+    public Color intensityMax = Color.white;
+
     public TextMeshProUGUI debugText;
 
     private ROSConnection _ros;
@@ -92,6 +107,10 @@ public class LidarStream : SensorStream
     private bool _missingParent = false;
     private bool rgbd = false;
     public int _numPts = 0;
+
+    private LocalKeyword _rgbdKeyword;
+    private LocalKeyword _intensityKeyword;
+    private LocalKeyword _zKeyword;
 
     public GameObject p;
 
@@ -108,21 +127,23 @@ public class LidarStream : SensorStream
         _meshVertices.SetData(mesh.vertices);
         _ptData = new GraphicsBuffer(GraphicsBuffer.Target.Structured, maxPts, vizType.GetSize());
 
-        switch (vizType)
-        {
-            case VizType.Lidar:
-                renderParams = new RenderParams(lidar_material);
-                break;
-            case VizType.RGBD:
-                renderParams = new RenderParams(rgbd_material);
-                break;
-            case VizType.RGBDMesh:
-                renderParams = new RenderParams(rgbd_mesh_material);
-                break;
-            case VizType.Splat:
-                renderParams = new RenderParams(splat_material);
-                break;
-        }
+        // switch (vizType)
+        // {
+        //     case VizType.Lidar:
+        //         renderParams = new RenderParams(lidar_material);
+        //         break;
+        //     case VizType.RGBD:
+        //         renderParams = new RenderParams(rgbd_material);
+        //         break;
+        //     case VizType.RGBDMesh:
+        //         renderParams = new RenderParams(rgbd_mesh_material);
+        //         break;
+        //     case VizType.Splat:
+        //         renderParams = new RenderParams(splat_material);
+        //         break;
+        // }
+
+        renderParams = new RenderParams(point_material);
 
         renderParams.worldBounds = new Bounds(Vector3.zero, Vector3.one * 100);
         renderParams.matProps = new MaterialPropertyBlock();
@@ -132,6 +153,20 @@ public class LidarStream : SensorStream
         renderParams.matProps.SetBuffer("_PointData", _ptData);
         renderParams.matProps.SetInt("_BaseVertexIndex", (int)mesh.GetBaseVertex(0));
         renderParams.matProps.SetBuffer("_Positions", _meshVertices);
+
+        Debug.Log("Asdfasdfsaasf");
+        Debug.Log("Material: " + renderParams.material.name);
+        // _rgbdKeyword = new LocalKeyword(renderParams.material.shader, "COLOR_RGB");
+        // _intensityKeyword = new LocalKeyword(renderParams.material.shader, "COLOR_INTENSITY");
+        // _zKeyword = new LocalKeyword(renderParams.material.shader, "COLOR_Z");
+        
+        // renderParams.material.EnableKeyword(_rgbdKeyword);
+
+        // LocalKeyword[] kw = renderParams.material.shader.keywordSpace.keywords;
+        // foreach (var k in kw)
+        // {
+        //     Debug.Log("Found Keyword: " + k);
+        // }
 
         debugText?.SetText("LidarDrawer Initialized on topic " + topic + ", enabled: " + _enabled);
 
@@ -214,6 +249,25 @@ public class LidarStream : SensorStream
         if (renderParams.matProps != null)
         {
             renderParams.matProps.SetFloat("_PointSize", scale);
+            // if (viz2 == VizType.RGBD)
+            // {
+            //     Debug.Log("Enabling RGBD keyword");
+            //     SetColorMode(renderParams.material, "COLOR_RGB");
+            // }
+            // else if (viz2 == VizType.Lidar)
+            // {
+            //     Debug.Log("Enabling Lidar keyword");
+            //     SetColorMode(renderParams.material, "COLOR_INTENSITY");
+
+            // }
+            // else if (viz2 == VizType.RGBDMesh)
+            // {
+            //     Debug.Log("Enabling RGBDMesh keyword");
+            //     SetColorMode(renderParams.material, "COLOR_Z");
+            // }
+            renderParams.matProps.SetColor("_ColorMin", intensityMin);
+            renderParams.matProps.SetColor("_ColorMax", intensityMax);
+
         }
         if (displayPts > maxPts)
         {
@@ -303,6 +357,14 @@ public class LidarStream : SensorStream
             Debug.Log("Subscribing to " + topic);
             _ros.Subscribe<PointCloud2Msg>(topic, OnPointcloud);
         }
+    }
+
+    private void SetColorMode(Material mat, string keyword)
+    {
+        // mat.DisableKeyword("COLOR_RGB");
+        // mat.DisableKeyword("COLOR_INTENSITY");
+        // mat.DisableKeyword("COLOR_Z");
+        // mat.EnableKeyword(keyword);
     }
 
     public override void ToggleTrack(int mode)

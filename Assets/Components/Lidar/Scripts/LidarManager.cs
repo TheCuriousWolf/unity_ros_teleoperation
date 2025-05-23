@@ -47,7 +47,7 @@ public class LidarManagerEditor : Editor
 
 #endif
 
-public class LidarManager : MonoBehaviour
+public class LidarManager : SensorManager
 {
     public LidarStream lidarStreamer;
     public LidarStream rgbdStreamer;

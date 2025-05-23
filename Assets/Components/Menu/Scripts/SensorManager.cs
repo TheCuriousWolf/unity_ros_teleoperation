@@ -69,7 +69,7 @@ public abstract class SensorManager : MonoBehaviour, IComparable<SensorManager>
     public string name = "DEFAULT";
     public string tag = "default";
     public GameObject sensorPrefab;
-    public TMPro.TextMeshProUGUI Count;
+    public TMPro.TextMeshProUGUI count;
     protected List<GameObject> sensors;
     protected ROSConnection _ros;
     protected Image _icon;
@@ -85,7 +85,7 @@ public abstract class SensorManager : MonoBehaviour, IComparable<SensorManager>
             Deserialize(PlayerPrefs.GetString(name+"_layout"));
         }
 
-        Count.text = sensors.Count.ToString();
+        count.text = sensors.Count.ToString();
     }
 
     public void AddSensor()
@@ -93,13 +93,13 @@ public abstract class SensorManager : MonoBehaviour, IComparable<SensorManager>
         GameObject sensor = Instantiate(sensorPrefab, transform.position + (transform.right * 0.5f), Quaternion.LookRotation(Camera.main.transform.forward, Vector3.up));
         sensor.GetComponent<SensorStream>().manager = this;
         sensors.Add(sensor);
-        Count.text = sensors.Count.ToString();
+        count.text = sensors.Count.ToString();
     }
 
     public void Remove(GameObject sensor)
     {
         sensors.Remove(sensor);
-        Count.text = sensors.Count.ToString();
+        count.text = sensors.Count.ToString();
         Destroy(sensor);
     }
 
@@ -110,7 +110,7 @@ public abstract class SensorManager : MonoBehaviour, IComparable<SensorManager>
             Destroy(sensor);
         }
         sensors.Clear();
-        Count.text = sensors.Count.ToString();
+        count.text = sensors.Count.ToString();
     }
     
     void OnApplicationQuit()
@@ -150,7 +150,7 @@ public abstract class SensorManager : MonoBehaviour, IComparable<SensorManager>
             image.GetComponent<SensorStream>().manager = this;
             sensors.Add(image);  
         }
-        Count.text = sensors.Count.ToString();
+        count.text = sensors.Count.ToString();
     }
 
     public int CompareTo(SensorManager other)
