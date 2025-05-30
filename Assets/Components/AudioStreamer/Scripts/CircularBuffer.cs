@@ -19,7 +19,7 @@ namespace CircularBuffer
             count = 0;
         }
 
-        public void Add(T item)
+        public void PushBack(T item)
         {
             buffer[head] = item;
             head = (head + 1) % bufferSize;
@@ -31,6 +31,17 @@ namespace CircularBuffer
             {
                 count++;
             }
+        }
+
+        public T PopFront()
+        {
+            if (count == 0)
+                throw new InvalidOperationException("Buffer is empty");
+
+            T item = buffer[tail];
+            tail = (tail + 1) % bufferSize;
+            count--;
+            return item;
         }
 
         public T[] GetBuffer()

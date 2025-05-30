@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Robotics.ROSTCPConnector;
@@ -6,99 +5,82 @@ using RosMessageTypes.AudioCommon;
 using System;
 using CircularBuffer;
 
-[System.Serializable]
-
 public class AudioReceiver : MonoBehaviour
 {
     private ROSConnection ros;
     private AudioSource audioSource;
     private CircularBuffer<float> audioBuffer;
-    [SerializeField] private int bufferSize = 8000;
     private string audioDataTopic = "/audio/audio";
     private int sampleRate = 16000;
     private int channelCount = 1;
-    private AudioClip clip;
+    private int clipLengthSeconds = 1;
+    private AudioClip streamingClip;
     public bool isActive = true;
 
-    public void toggleSpeaker()
-    {
-       isActive = !isActive;
-    }
-
-    // Start is called before the first frame update
     void Start()
-    {   
-        // Creates audio source
+    {
         audioSource = gameObject.AddComponent<AudioSource>();
-        audioSource.loop = false;
+        audioSource.loop = true;
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0.0f;
 
-        // Creates audio buffer
-        audioBuffer = new CircularBuffer<float>(bufferSize);
+        // Size enough for at least 1 second of audio
+        audioBuffer = new CircularBuffer<float>(sampleRate * 2);
 
-        // Connects to ROS and subscribes to the audio data topic
-        ros = ROSConnection.GetOrCreateInstance(); 
+        // Create streaming clip
+        streamingClip = AudioClip.Create("StreamingAudio", sampleRate * clipLengthSeconds, channelCount, sampleRate, true, OnAudioRead);
+        audioSource.clip = streamingClip;
+        audioSource.Play();
+
+        // Connect to ROS
+        ros = ROSConnection.GetOrCreateInstance();
         ros.Subscribe<AudioDataMsg>(audioDataTopic, ReceiveAudioMessage);
     }
 
-    // Update is called once per frame
-    void Update()
-    {   
- 
-        if (audioBuffer.Count > bufferSize/2 && !audioSource.isPlaying)
-        {
-            PlayBufferedAudio();
-        }
-
-    }
-    
-   
-    // Callback function for receiving audio data
     void ReceiveAudioMessage(AudioDataMsg msg)
-    {       
-        if (isActive)
-        {
-            byte[] byteData = msg.data;
-            float[] floatData = new float[byteData.Length / 2];
-            for (int i = 0; i < floatData.Length; i += 1)
-            {
-                short sample = (short)(byteData[i * 2] | (byteData[i * 2 + 1] << 8));
-                floatData[i] = sample / 32768.0f;
-            }
+    {
+        if (!isActive) return;
 
-            lock (audioBuffer)
+        byte[] byteData = msg.data;
+        float[] floatData = new float[byteData.Length / 2];
+        
+        // Converting byte data to float data
+        for (int i = 0; i < floatData.Length; i++)
+        {
+            short sample = (short)(byteData[i * 2] | (byteData[i * 2 + 1] << 8));
+            floatData[i] = sample / 32768.0f;
+        }
+
+        lock (audioBuffer)
+        {
+            foreach (var sample in floatData)
             {
-                foreach (var sample in floatData)
-                {
-                    audioBuffer.Add(sample);
-                }
+                audioBuffer.PushBack(sample);
             }
         }
     }
 
-    // Play audio from buffer
-
-    void PlayBufferedAudio()
+    void OnAudioRead(float[] data)
     {
         lock (audioBuffer)
-        {   
-            float[] floatData = audioBuffer.GetBuffer();
-            clip = AudioClip.Create("Audio", floatData.Length, channelCount, sampleRate, false);
-            clip.SetData(floatData, 0);
-            audioSource.clip = clip;
-            audioSource.Play();
-            audioBuffer.Clear();
+        {
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] = audioBuffer.Count > 0 ? audioBuffer.PopFront() : 0.0f;
+            }
         }
     }
 
-
-    // OnDestroy is called when the object is destroyed
     void OnDestroy()
     {
         if (ros != null)
-        {   
+        {
             ros.Unsubscribe(audioDataTopic);
         }
+    }
+
+    public void toggleSpeaker()
+    {
+        isActive = !isActive;
     }
 }
