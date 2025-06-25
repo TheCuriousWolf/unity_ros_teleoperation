@@ -12,7 +12,7 @@ In order to get the correct audio format fot both nodes, the following parameter
 
 - **Audio Format**: "wave", Uncompressed PCM (Pulse-Code Modulation)
 - **Bit Depth**: 16-bit
-- **Sample Rate**: 16 kHz`
+- **Sample Rate**: 16 kHz
 
 The default audio packet chunk size (320 bytes) caused buffer underruns in Unity, producing periodic clicking noise. This was resolved by modifying the `audio_capture` node source code to increase the chunk size to **1024 bytes**.
 
