@@ -32,5 +32,5 @@ Microphone and speaker control was integrated into the VR environment via toggle
 
 ## Unity Audio Settings
 
-For some VR paltforms it can help change the 'DSP Buffer Size' to 'Best Performance' in the Project Settigns, to increase aduio streaming quality.
-![Unity Audio Settings](/docs/images/uinity-audio-settings.png)
+For some VR paltforms it can help change the `DSP Buffer Size` to `Best Performance` in the Project Settigns, to increase aduio streaming quality.
+![Unity Audio Settings](/docs/images/unity-audio-settings.png)
