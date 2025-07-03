@@ -39,10 +39,10 @@ public class MenuTemplate : MonoBehaviour
     public SensorManager[] managers;
     public GameObject headerPrefab;
 
-    void Start()
-    {
-        SetupRows();
-    }
+    // void Start()
+    // {
+    //     SetupRows();
+    // }
 
     public void SetupRows()
     {

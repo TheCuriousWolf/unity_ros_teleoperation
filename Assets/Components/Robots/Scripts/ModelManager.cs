@@ -106,7 +106,8 @@ public class ModelManager : MonoBehaviour
             Destroy(_currentModel);
     
         _currentModel = Instantiate(currentRobot.modelRoot);
-        _currentModel.transform.SetParent(_root.transform);
+        if(_root != null)
+            _currentModel.transform.SetParent(_root.transform);
 
         if(_inited)
         {

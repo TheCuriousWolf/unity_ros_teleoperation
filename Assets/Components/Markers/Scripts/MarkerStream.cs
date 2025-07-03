@@ -197,9 +197,8 @@ public class MarkerStream : SensorStream
             }
             markerObject.transform.localPosition = msg.pose.position.From<FLU>();
             markerObject.transform.localRotation = msg.pose.orientation.From<FLU>();
-            Vector3 scale = msg.scale.From<FLU>();
-            scale.x *= -1;
-            markerObject.transform.localScale = scale;
+
+        
         }
 
     }
@@ -241,6 +240,10 @@ public class MarkerStream : SensorStream
         {
             pointSize = 0f; // Reset to default value
         }
-        _updatePointSize(pointSize);
+        if (_updatePointSize != null)
+        {
+            // Notify all point markers to update their size
+            _updatePointSize(pointSize);
+        }
     }
 }
