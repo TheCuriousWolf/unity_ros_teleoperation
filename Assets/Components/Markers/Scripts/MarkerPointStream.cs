@@ -12,6 +12,7 @@ public class MarkerPointStream : MonoBehaviour, IMarkerViz
 {
 
     public Material point_material;
+    public Material line_material;
 
     GraphicsBuffer _meshTriangles;
     GraphicsBuffer _meshVertices;
@@ -25,6 +26,9 @@ public class MarkerPointStream : MonoBehaviour, IMarkerViz
     public bool _enabled = true;
     public int _numPts = 0;
     public MarkerType markerType = MarkerType.Points;
+
+    private ColorRGBAMsg[] _colors;
+    private PointMsg[] _points;
 
 
 
@@ -59,10 +63,37 @@ public class MarkerPointStream : MonoBehaviour, IMarkerViz
 
     private void Update()
     {
-        if (_enabled && mesh != null)
+        if (_enabled && mesh != null && !markerType.IsLines())
         {
             renderParams.matProps.SetMatrix("_ObjectToWorld", transform.localToWorldMatrix);
             Graphics.RenderPrimitivesIndexed(renderParams, MeshTopology.Triangles, _meshTriangles, _meshTriangles.count, (int)mesh.GetIndexStart(0), _numPts);
+        }
+    }
+
+    public void OnRenderObject()
+    {
+        if (!line_material)
+        {
+            Debug.LogError("MarkerPointStream: line_material is not set");
+            return;
+        }
+
+        if (_enabled && mesh != null && markerType.IsLines())
+        {
+            GL.PushMatrix();
+            line_material.SetPass(0);
+            GL.MultMatrix(transform.localToWorldMatrix);
+            GL.Begin(GL.LINES);
+            for (int i = 0; i < _numPts; i++)
+            {
+                Vector3 pt = _points[i].From<FLU>();
+                ColorRGBAMsg colorMsg = _colors.Length == 1 ? _colors[0] : _colors[i];
+                Color color = new Color(colorMsg.r, colorMsg.g, colorMsg.b, colorMsg.a); // Fixed alpha
+                GL.Color(color);
+                GL.Vertex3(pt.x, pt.y, pt.z);
+            }
+            GL.End();
+            GL.PopMatrix();
         }
     }
 
@@ -100,9 +131,12 @@ public class MarkerPointStream : MonoBehaviour, IMarkerViz
 
     public void SetData(PoseMsg pose, Vector3Msg scale, ColorRGBAMsg[] colors, PointMsg[] points)
     {
+        _colors = colors;
+        _points = points;
         if (points == null || points.Length == 0)
         {
             _ptData.SetData(new Vector4[0]);
+            _numPts = 0;
             return;
         }
 
@@ -127,6 +161,16 @@ public class MarkerPointStream : MonoBehaviour, IMarkerViz
         int a = 255; // Fixed alpha
         int packed = (r << 16) | (g << 8) | (b);
         return System.BitConverter.Int32BitsToSingle(packed);
+    }
+
+    public static Color UnpackRGBA(float packedColor)
+    {
+        // Unpack a float back to ColorRGBA
+        int packed = System.BitConverter.SingleToInt32Bits(packedColor);
+        int r = (packed >> 16) & 0xFF;
+        int g = (packed >> 8) & 0xFF;
+        int b = packed & 0xFF;
+        return new Color(r / 255f, g / 255f, b / 255f, 1.0f); // Fixed alpha
     }
 
 

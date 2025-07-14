@@ -420,8 +420,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: Markers
-  tag: Markers
-  sensorPrefab: {fileID: 0}
+  tag: Points
+  sensorPrefab: {fileID: 3083173085853553563, guid: 8e15a22dd377851458afc3b1aace350e, type: 3}
   count: {fileID: 2398045699711728880}
   vizPrefabs: []
 --- !u!1001 &4398700027092934476

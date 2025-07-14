@@ -93,25 +93,24 @@ public class LidarUtils
         }
 
         List<int> triangles = new List<int>();
-
-        // Bottom face (fan)
+        // Bottom face (fan) - correct winding order
         for (int i = 0; i < sides; i++)
         {
             int curr = 2 + i * 2;
             int next = 2 + ((i + 1) % sides) * 2;
             triangles.Add(0);      // bottom center
-            triangles.Add(next);   // next bottom
             triangles.Add(curr);   // current bottom
+            triangles.Add(next);   // next bottom
         }
 
-        // Top face (fan)
+        // Top face (fan) - correct winding order
         for (int i = 0; i < sides; i++)
         {
             int curr = 3 + i * 2;
             int next = 3 + ((i + 1) % sides) * 2;
             triangles.Add(1);      // top center
-            triangles.Add(curr);   // current top
             triangles.Add(next);   // next top
+            triangles.Add(curr);   // current top
         }
 
         // Side faces (quads split into triangles)

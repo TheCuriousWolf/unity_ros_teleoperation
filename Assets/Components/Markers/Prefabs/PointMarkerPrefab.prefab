@@ -45,8 +45,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   point_material: {fileID: 2100000, guid: 181bc947bb18065598ad1d23398fd24a, type: 2}
+  line_material: {fileID: 2100000, guid: 0399c661b226c904eb659e94fc8d3846, type: 2}
   scale: 0.05
   maxPts: 100000
   sides: 3
   _enabled: 1
   _numPts: 0
+  markerType: 8
