@@ -147,6 +147,7 @@ public class LidarStream : SensorStream
     private LocalKeyword _rgbdKeyword;
     private LocalKeyword _intensityKeyword;
     private LocalKeyword _zKeyword;
+    private GameObject _viz;
 
     public GameObject p;
 
@@ -267,10 +268,10 @@ public class LidarStream : SensorStream
             _missingParent = true;
         }
 
-        transform.parent = _parent.transform;
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.Euler(-90, 90, 0);
-        transform.localScale = new Vector3(-1, 1, 1);
+        // transform.parent = _parent.transform;
+        // transform.localPosition = Vector3.zero;
+        // transform.localRotation = Quaternion.Euler(-90, 90, 0);
+        // transform.localScale = new Vector3(-1, 1, 1);
     }
 
     private void OnValidate()
@@ -319,7 +320,8 @@ public class LidarStream : SensorStream
     {
         if (_enabled)
         {
-            renderParams.matProps.SetMatrix("_ObjectToWorld", transform.localToWorldMatrix);
+            Transform parentTransform = _parent != null ? _parent.transform : transform;
+            renderParams.matProps.SetMatrix("_ObjectToWorld", parentTransform.localToWorldMatrix);
             Graphics.RenderPrimitivesIndexed(renderParams, MeshTopology.Triangles, _meshTriangles, _meshTriangles.count, (int)mesh.GetIndexStart(0), _numPts);
         }
     }
