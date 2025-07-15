@@ -25,10 +25,6 @@ class ManagerTogglerEditor : Editor
         {
             myScript.UpdateMenus();
         }
-        if (GUILayout.Button("Toggle"))
-        {
-            myScript.ToggleMenu();
-        }
         foreach (var button in myScript.GetComponentsInChildren<Button>())
         {
             if (GUILayout.Button(button.transform.parent.name))
@@ -50,19 +46,12 @@ public class ManagerToggler : MonoBehaviour
     public SensorManager[] _managers;
     private MenuTemplate[] _menuTemplates;
     private GameObject _menu;
-    private GameObject _baseMenu;
 
     public void Start()
     {
         Setup();
         PopulateMenu();
 
-        _baseMenu.SetActive(false);
-    }
-
-    public void ToggleMenu()
-    {
-        _baseMenu.SetActive(!_baseMenu.activeSelf);
     }
 
     public void Setup()
@@ -70,7 +59,6 @@ public class ManagerToggler : MonoBehaviour
         _managers = FindObjectsByType<SensorManager>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         _menuTemplates = FindObjectsOfType<MenuTemplate>();
         _menu = GameObject.Find("Menu");
-        _baseMenu = GameObject.Find("BaseMenu");
 
         // Sort managers by name
         System.Array.Sort(_managers, (x, y) => x.name.CompareTo(y.name));

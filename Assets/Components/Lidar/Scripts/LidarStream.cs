@@ -25,6 +25,34 @@ public class LidarStreamEditor : Editor
         {
             myScript.ToggleEnabled();
         }
+        if(GUILayout.Button("Refresh Topics"))
+        {
+            myScript.RefreshTopics();
+        }
+        if(GUILayout.Button("Select 0"))
+        {
+            myScript.OnTopicSelect(0);
+        }
+        if(GUILayout.Button("Select 1"))
+        {
+            myScript.OnTopicSelect(1);
+        }
+        if(GUILayout.Button("Set color to RGB"))
+        {
+            myScript.OnColorSelect(0);
+        }
+        if(GUILayout.Button("Set color to Intensity"))
+        {
+            myScript.OnColorSelect(1);
+        }
+        if(GUILayout.Button("Set color to Z"))
+        {
+            myScript.OnColorSelect(2);
+        }
+        if(GUILayout.Button("Clear"))
+        {
+            myScript.Clear();
+        }
         GUILayout.Label("Number of Points: " + myScript._numPts);
     }
 }
@@ -104,6 +132,8 @@ public class LidarStream : SensorStream
     public Dropdown colorModeDropdown;
 
     public TextMeshProUGUI debugText;
+    public TextMeshProUGUI topicText;
+
 
     private ROSConnection _ros;
     private Mesh mesh;
@@ -117,6 +147,7 @@ public class LidarStream : SensorStream
     private LocalKeyword _rgbdKeyword;
     private LocalKeyword _intensityKeyword;
     private LocalKeyword _zKeyword;
+    private GameObject _viz;
 
     public GameObject p;
 
@@ -160,6 +191,11 @@ public class LidarStream : SensorStream
         };
         colorModeDropdown.AddOptions(colorOptions);
         colorModeDropdown.onValueChanged.AddListener(OnColorSelect);
+
+        debugText?.SetText("--");
+
+        RefreshTopics();
+        topicDropdown.onValueChanged.AddListener(OnTopicSelect);
 
         densitySlider.onValueChanged.AddListener(OnDensityChange);
         sizeSlider.onValueChanged.AddListener(OnSizeChange);
@@ -232,10 +268,10 @@ public class LidarStream : SensorStream
             _missingParent = true;
         }
 
-        transform.parent = _parent.transform;
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.Euler(-90, 90, 0);
-        transform.localScale = new Vector3(-1, 1, 1);
+        // transform.parent = _parent.transform;
+        // transform.localPosition = Vector3.zero;
+        // transform.localRotation = Quaternion.Euler(-90, 90, 0);
+        // transform.localScale = new Vector3(-1, 1, 1);
     }
 
     private void OnValidate()
@@ -284,7 +320,8 @@ public class LidarStream : SensorStream
     {
         if (_enabled)
         {
-            renderParams.matProps.SetMatrix("_ObjectToWorld", transform.localToWorldMatrix);
+            Transform parentTransform = _parent != null ? _parent.transform : transform;
+            renderParams.matProps.SetMatrix("_ObjectToWorld", parentTransform.localToWorldMatrix);
             Graphics.RenderPrimitivesIndexed(renderParams, MeshTopology.Triangles, _meshTriangles, _meshTriangles.count, (int)mesh.GetIndexStart(0), _numPts);
         }
     }
@@ -303,7 +340,7 @@ public class LidarStream : SensorStream
 
         _ptData.SetData(LidarUtils.ExtractData(pointCloud, displayPts, vizType, out _numPts));
 
-        debugText?.SetText(_numPts);
+        debugText?.SetText("" + _numPts);
     }
 
     public void OnTopicChange(string topic)
@@ -317,11 +354,33 @@ public class LidarStream : SensorStream
         {
             Debug.Log("Disabling pointcloud display");
             _enabled = false;
+            topicText?.SetText("None");
             return;
         }
+        _enabled = true;
         this.topic = topic;
+        topicText?.SetText(topic);
         _ros.Subscribe<PointCloud2Msg>(topic, OnPointcloud);
         Debug.Log("Subscribed to " + topic);
+    }
+
+    public void OnTopicSelect(int value)
+    {
+        if (value < 0 || value >= topicDropdown.options.Count)
+        {
+            Debug.LogWarning("Invalid topic selected: " + value);
+            return;
+        }
+
+        string selectedTopic = topicDropdown.options[value].text;
+        if (selectedTopic == "None")
+        {
+            OnTopicChange(null);
+        }
+        else
+        {
+            OnTopicChange(selectedTopic);
+        }
     }
 
     public void OnDensityChange(float density)
@@ -365,7 +424,7 @@ public class LidarStream : SensorStream
 
         topicDropdown.AddOptions(options);
 
-        topicDropdown.value = Mathf.Min(_lastSelected, options.Count - 1);
+        topicDropdown.value = Mathf.Min(0, options.Count - 1);
     }
 
     public void OnColorSelect(int value)
@@ -385,7 +444,7 @@ public class LidarStream : SensorStream
             _ => _intensityKeyword // Default to intensity if something goes wrong
         });
     }
-    public void OnTopicClick()
+    public void RefreshTopics()
     {
         _ros.GetTopicAndTypeList(UpdateTopics);
     }
@@ -426,6 +485,11 @@ public class LidarStream : SensorStream
     public override void Deserialize(string data)
     {
         throw new System.NotImplementedException();
+    }
+
+    public void Clear()
+    {
+        manager.Remove(gameObject);
     }
     
 }

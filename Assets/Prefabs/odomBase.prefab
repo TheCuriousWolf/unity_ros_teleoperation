@@ -88,8 +88,10 @@ MonoBehaviour:
   speed: 1
   rotationTolerance: 5
   handSelectable: 0
+  findRoot: 1
   root: {fileID: 0}
   _root: {fileID: 1197795077337918393}
+  _locked: 0
 --- !u!1001 &6008439337864821166
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -144,7 +146,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8136257491886995975, guid: 2341f533ecbe83a75977f9575b0cf36f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

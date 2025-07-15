@@ -158,7 +158,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "4a5b255f369421bfa8e36c958ad8bbbb5320e3d6"
+      "hash": "8fac67abcfb92d3f218b8365e7a08f093965ecdd"
     },
     "com.unity.robotics.visualizations": {
       "version": "https://github.com/leggedrobotics/ROS-TCP-Connector.git?path=/com.unity.robotics.visualizations",
