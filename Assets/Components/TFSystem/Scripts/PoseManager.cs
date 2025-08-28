@@ -63,7 +63,7 @@ public class PoseManager : MonoBehaviour
     public Transform root;
     public Transform _root;
     private Transform _mainCamera;
-    private Transform _robot;
+    public Transform _robot;
 
     public bool _locked = false;
     private Vector3 _center;
@@ -116,7 +116,7 @@ public class PoseManager : MonoBehaviour
 
     }
 
-    void LateUpdate()
+    void Update()
     {
         if(_robot == null)
         {
@@ -125,8 +125,16 @@ public class PoseManager : MonoBehaviour
             {
                 Debug.LogWarning("PoseManager: robot not found");
             }
-            _robot = robot.transform;
+            else
+            {
+                _robot = robot.transform;
+            }
         }
+    // }
+
+    // void OnPreRender()
+    // {
+        
 
         while (root.parent != null && findRoot)
         {

@@ -17,6 +17,8 @@ public class MarkerPointStream : MonoBehaviour, IMarkerViz
     GraphicsBuffer _meshTriangles;
     GraphicsBuffer _meshVertices;
     GraphicsBuffer _ptData;
+    GraphicsBuffer _rotData;
+
 
     public float scale = .01f;
     public int maxPts = 100_000;
@@ -46,17 +48,27 @@ public class MarkerPointStream : MonoBehaviour, IMarkerViz
         _meshTriangles.SetData(mesh.triangles);
         _meshVertices = new GraphicsBuffer(GraphicsBuffer.Target.Structured, mesh.vertices.Length, 3 * sizeof(float));
         _meshVertices.SetData(mesh.vertices);
-        _ptData = new GraphicsBuffer(GraphicsBuffer.Target.Structured, maxPts, 4);
-
+        _ptData = new GraphicsBuffer(GraphicsBuffer.Target.Structured, maxPts, 16);
+        _rotData = new GraphicsBuffer(GraphicsBuffer.Target.Structured, maxPts, 16);
 
         renderParams = new RenderParams(point_material);
 
         renderParams.worldBounds = new Bounds(Vector3.zero, Vector3.one * 100);
         renderParams.matProps = new MaterialPropertyBlock();
 
+        // Sets rotation data to all 0 since we dont rotate the markers
+        Quaternion identity = Quaternion.identity;
+        Vector4[] rotData = new Vector4[maxPts];
+        for (int i = 0; i < maxPts; i++)
+        {
+            rotData[i] = new Vector4(identity.x, identity.y, identity.z, identity.w);
+        }
+        _rotData.SetData(rotData);
+
         renderParams.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 0, 0)));
         renderParams.matProps.SetFloat("_PointSize", scale);
         renderParams.matProps.SetBuffer("_PointData", _ptData);
+        renderParams.matProps.SetBuffer("_RotationData", _rotData);
 
     }
 
@@ -144,34 +156,13 @@ public class MarkerPointStream : MonoBehaviour, IMarkerViz
         for (int i = 0; i < points.Length; i++)
         {
             Vector3 pt = points[i].From<FLU>();
-            float color = colors.Length == 1 ? PackRGBA(colors[0]) : PackRGBA(colors[i]);
+            float color = colors.Length == 1 ? LidarUtils.PackRGBA(colors[0]) : LidarUtils.PackRGBA(colors[i]);
             pointData[i] = new Vector4(pt.x, pt.y, pt.z, color);
         }
 
         _ptData.SetData(pointData);
         _numPts = points.Length;
-    }
-
-    public static float PackRGBA(ColorRGBAMsg color)
-    {
-        // Pack a ColorRGBAMsg (r,g,b,a in 0-1 range) into a float
-        int r = Mathf.Clamp(Mathf.RoundToInt(color.r * 255f), 0, 255);
-        int g = Mathf.Clamp(Mathf.RoundToInt(color.g * 255f), 0, 255);
-        int b = Mathf.Clamp(Mathf.RoundToInt(color.b * 255f), 0, 255);
-        int a = 255; // Fixed alpha
-        int packed = (r << 16) | (g << 8) | (b);
-        return System.BitConverter.Int32BitsToSingle(packed);
-    }
-
-    public static Color UnpackRGBA(float packedColor)
-    {
-        // Unpack a float back to ColorRGBA
-        int packed = System.BitConverter.SingleToInt32Bits(packedColor);
-        int r = (packed >> 16) & 0xFF;
-        int g = (packed >> 8) & 0xFF;
-        int b = packed & 0xFF;
-        return new Color(r / 255f, g / 255f, b / 255f, 1.0f); // Fixed alpha
-    }
+    }  
 
 
     private void OnValidate()

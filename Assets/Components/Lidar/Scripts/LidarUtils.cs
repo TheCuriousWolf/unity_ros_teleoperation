@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using RosMessageTypes.Sensor;
+using RosMessageTypes.Std;
+
 
 
 public class LidarUtils 
@@ -186,6 +188,124 @@ public class LidarUtils
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
         return mesh;
+    }
+
+
+    public static Mesh MakeCone(int sides)
+    {
+        float radius = 1f;
+        Mesh mesh = new Mesh();
+
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+
+        // Base center
+        vertices.Add(new Vector3(0, 0, 0));
+
+        // Base perimeter
+        for (int i = 0; i < sides; i++)
+        {
+            float angle = 2 * Mathf.PI * i / sides;
+            float x = Mathf.Cos(angle) * radius;
+            float z = Mathf.Sin(angle) * radius;
+            vertices.Add(new Vector3(x, 0, z));
+        }
+
+        // Apex
+        vertices.Add(new Vector3(0, 1, 0));
+
+        // Base triangles (flipped winding order)
+        for (int i = 0; i < sides; i++)
+        {
+            int next = (i + 1) % sides;
+            triangles.Add(0);          // base center
+            triangles.Add(i + 1);      // current base perimeter
+            triangles.Add(next + 1);   // next base perimeter
+        }
+
+        // Side triangles (flipped winding order)
+        int apexIndex = vertices.Count - 1;
+        for (int i = 0; i < sides; i++)
+        {
+            int next = (i + 1) % sides;
+            triangles.Add(apexIndex);   // apex
+            triangles.Add(next + 1);    // next base perimeter
+            triangles.Add(i + 1);       // current base perimeter
+        }
+
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        return mesh;
+    }
+
+    public static Mesh MakeArrow(float arrowRadius, int sides)
+    {
+        Mesh mesh = new Mesh();
+
+        CombineInstance[] combine = new CombineInstance[2];
+
+        // Create the arrow shaft
+        Mesh shaft = MakeCylinder(sides);
+        shaft.name = "ArrowShaft";
+
+        // Rotate so cylinder faces forward (z+), scale shaft so its length is 1 and diameter is arrowRadius
+        Matrix4x4 shaftMat = Matrix4x4.TRS(
+            new Vector3(0, 0, 0.25f), // move forward so base is at z=0
+            Quaternion.Euler(90, 0, 0), // rotate from y+ to z+
+            new Vector3(arrowRadius/2, 0.5f, arrowRadius/2)
+        );
+        combine[0] = new CombineInstance { mesh = shaft, transform = shaftMat };
+
+        // Create the arrowhead
+        Mesh arrowhead = MakeCone(sides);
+        arrowhead.name = "ArrowHead";
+
+        // Rotate so cone faces forward (z+), scale arrowhead so its height is 1 and base diameter is 2 * arrowRadius
+        Matrix4x4 arrowheadMat = Matrix4x4.TRS(
+            new Vector3(0, 0, 0.5f), // move forward so base is at z=0.5
+            Quaternion.Euler(90, 0, 0), // rotate from y+ to z+
+            new Vector3(arrowRadius, 0.5f, arrowRadius)
+        );
+        combine[1] = new CombineInstance { mesh = arrowhead, transform = arrowheadMat };
+
+        mesh.CombineMeshes(combine);
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        return mesh;
+    }
+
+    public static float PackRGBA(Color color)
+    {
+        // Pack a Color (r,g,b,a in 0-1 range) into a float
+        int r = Mathf.Clamp(Mathf.RoundToInt(color.r * 255f), 0, 255);
+        int g = Mathf.Clamp(Mathf.RoundToInt(color.g * 255f), 0, 255);
+        int b = Mathf.Clamp(Mathf.RoundToInt(color.b * 255f), 0, 255);
+        int a = 255; // Fixed alpha
+        int packed = (r << 16) | (g << 8) | (b);
+        return System.BitConverter.Int32BitsToSingle(packed);
+    }
+
+    public static float PackRGBA(ColorRGBAMsg color)
+    {
+        // Pack a ColorRGBAMsg (r,g,b,a in 0-1 range) into a float
+        int r = Mathf.Clamp(Mathf.RoundToInt(color.r * 255f), 0, 255);
+        int g = Mathf.Clamp(Mathf.RoundToInt(color.g * 255f), 0, 255);
+        int b = Mathf.Clamp(Mathf.RoundToInt(color.b * 255f), 0, 255);
+        int a = 255; // Fixed alpha
+        int packed = (r << 16) | (g << 8) | (b);
+        return System.BitConverter.Int32BitsToSingle(packed);
+    }
+
+    public static Color UnpackRGBA(float packedColor)
+    {
+        // Unpack a float back to ColorRGBA
+        int packed = System.BitConverter.SingleToInt32Bits(packedColor);
+        int r = (packed >> 16) & 0xFF;
+        int g = (packed >> 8) & 0xFF;
+        int b = packed & 0xFF;
+        return new Color(r / 255f, g / 255f, b / 255f, 1.0f); // Fixed alpha
     }
 
     public static byte[] ExtractData(PointCloud2Msg data, int maxPts, VizType vizType, out int numPts)

@@ -73,7 +73,7 @@ public class JoystickManager : MonoBehaviour
                 leftHandState,
                 rightHandState
             };
-            _ros.Send(joyTopic, _joyMsg);
+            _ros.Publish(joyTopic, _joyMsg);
         }
     }
 

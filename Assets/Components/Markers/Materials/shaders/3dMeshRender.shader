@@ -34,9 +34,15 @@ Shader "Unlit/3dMeshRender"
                 float color;
             };
 
+            struct rotdata
+            {
+                float4 rotation;
+            };
+
             StructuredBuffer<float3> _Positions;
             StructuredBuffer<int> _MeshTriangles;
             StructuredBuffer<meshdata> _PointData;
+            StructuredBuffer<rotdata> _RotationData;
 
             uniform uint _BaseVertexIndex;
             uniform float _PointSize;
@@ -49,7 +55,12 @@ Shader "Unlit/3dMeshRender"
                 v2f o;
                 float3 pos = _PointData[instanceID].position;
                 float3 mesh_pt = _Positions[_BaseVertexIndex + vertexID] * _PointSize;
-                float4 wpos = mul(_ObjectToWorld, float4(pos + mesh_pt, 1.0f));
+
+                // Apply rotation from _RotationData[instanceID].rotation (assumed quaternion)
+                float4 q = _RotationData[instanceID].rotation;
+                float3 rotated_mesh_pt = rotate_vector(mesh_pt, q);
+
+                float4 wpos = mul(_ObjectToWorld, float4(pos + rotated_mesh_pt, 1.0f));
 
                 o.pos = mul(UNITY_MATRIX_VP, wpos);
                 o.color = UnpackRGBA(_PointData[instanceID].color);
