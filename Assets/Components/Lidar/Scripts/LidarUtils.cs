@@ -6,23 +6,61 @@ using RosMessageTypes.Std;
 
 
 
-public class LidarUtils 
+public class LidarUtils
 {
     public static Mesh MakePolygon(int sides)
     {
         Mesh mesh = new Mesh();
         Vector3[] vertices = new Vector3[sides];
         int[] triangles = new int[(sides - 2) * 3];
-        for(int i = 0; i < sides; i++)
+        for (int i = 0; i < sides; i++)
         {
             float angle = 2 * Mathf.PI * i / sides;
             vertices[i] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0);
         }
-        for(int i = 0; i < sides - 2; i++)
+        for (int i = 0; i < sides - 2; i++)
         {
             triangles[i * 3] = 0;
             triangles[i * 3 + 1] = i + 1;
             triangles[i * 3 + 2] = i + 2;
+        }
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        mesh.UploadMeshData(false);
+        return mesh;
+    }
+
+    public static Mesh MakePlane(int width, int height)
+    {
+        Mesh mesh = new Mesh();
+        Vector3[] vertices = new Vector3[width * height];
+        int[] triangles = new int[(width - 1) * (height - 1) * 6];
+        for (int z = 0; z < height; z++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                vertices[z * width + x] = new Vector3(
+                    (float)x / (width - 1) - 0.5f,
+                    0,
+                    (float)z / (height - 1) - 0.5f
+                );
+            }
+        }
+        int triIndex = 0;
+        for (int z = 0; z < height - 1; z++)
+        {
+            for (int x = 0; x < width - 1; x++)
+            {
+                triangles[triIndex++] = z * width + x;
+                triangles[triIndex++] = (z + 1) * width + x;
+                triangles[triIndex++] = z * width + (x + 1);
+
+                triangles[triIndex++] = (z + 1) * width + x;
+                triangles[triIndex++] = (z + 1) * width + (x + 1);
+                triangles[triIndex++] = z * width + (x + 1);
+            }
         }
         mesh.vertices = vertices;
         mesh.triangles = triangles;
@@ -254,7 +292,7 @@ public class LidarUtils
         Matrix4x4 shaftMat = Matrix4x4.TRS(
             new Vector3(0, 0, 0.25f), // move forward so base is at z=0
             Quaternion.Euler(90, 0, 0), // rotate from y+ to z+
-            new Vector3(arrowRadius/2, 0.5f, arrowRadius/2)
+            new Vector3(arrowRadius / 2, 0.5f, arrowRadius / 2)
         );
         combine[0] = new CombineInstance { mesh = shaft, transform = shaftMat };
 
@@ -365,5 +403,19 @@ public class LidarUtils
             }
         }
         return outData;
+    }
+    
+    public static Texture2D GradientToTexture(Gradient gradient, int resolution = 256) {
+        Texture2D tex = new Texture2D(resolution, 1, TextureFormat.RGBA32, false);
+        tex.wrapMode = TextureWrapMode.Clamp;
+
+        for (int i = 0; i < resolution; i++) {
+            float t = i / (float)(resolution - 1);
+            Color col = gradient.Evaluate(t);
+            tex.SetPixel(i, 0, col);
+        }
+
+        tex.Apply();
+        return tex;
     }
 }

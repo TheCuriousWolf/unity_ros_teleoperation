@@ -37,7 +37,6 @@ public class LidarManager : SensorManager
 
     // private bool _lidarClicked;
 
-    private GridMapVisualizer _gridMapVisualizer;
 
     // public GameObject menu;
 
@@ -48,20 +47,7 @@ public class LidarManager : SensorManager
     {
         ros = ROSConnection.GetOrCreateInstance();
 
-        _gridMapVisualizer = FindObjectOfType<GridMapVisualizer>();
-        if (_gridMapVisualizer == null)
-        {
-            Debug.LogWarning("No GridMapVisualizer found in scene!");
-        }
     }
 
-
-    public void ToggleGridMap()
-    {
-        if(_gridMapVisualizer != null)
-        {
-            _gridMapVisualizer.gameObject.SetActive(!_gridMapVisualizer.gameObject.activeSelf);
-        }
-    }
 
 }

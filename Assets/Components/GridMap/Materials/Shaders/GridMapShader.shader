@@ -1,11 +1,13 @@
-Shader "Unlit/GridMapShader"
+Shader "Unlit/ROS/GridMapShader"
 {
     Properties
     {
+        _GradientTex ("Gradient (RGB)", 2D) = "white" {}
     }
     SubShader
     {
         Tags { "RenderType"="Transparent" "Queue"="Transparent" }
+        ZWrite On
         Blend SrcAlpha OneMinusSrcAlpha
 
         Cull Off
@@ -17,44 +19,48 @@ Shader "Unlit/GridMapShader"
             #pragma vertex vert
             #pragma fragment frag
 
-            #pragma multi_compile_fog
-
             #include "UnityCG.cginc"
+            #include "Assets/Components/Lidar/Materials/Shaders/PointHelper.cginc"
 
             struct appdata
             {
                 float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-                fixed4 color : COLOR;
+                uint vertexID : SV_VertexID;
             };
 
             struct v2f
             {
-                float2 uv : TEXCOORD0;
-                UNITY_FOG_COORDS(1)
-                float4 vertex : SV_POSITION;
-                fixed4 color : COLOR;
+                float4 pos : SV_POSITION;
+                uint vertexID : TEXCOORD0;
             };
 
-            sampler2D _MainTex;
+            StructuredBuffer<float> _GridData;
+            StructuredBuffer<float> _IntensityData;
 
-            v2f vert (appdata v)
-            {
+            uniform float4x4 _ObjectToWorld;
+            sampler2D _GradientTex;
+            uniform uint _BaseVertexIndex;
+            uniform float _IntensityMin;
+            uniform float _IntensityMax;
+
+            uniform float _Opacity;
+
+            v2f vert(appdata v) {
+                float3 worldPos = v.vertex.xyz;
+                worldPos.y += _GridData[v.vertexID];
                 v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = v.uv;
-                o.color = v.color;
-                UNITY_TRANSFER_FOG(o,o.vertex);
+                float4 objectPos = mul(_ObjectToWorld, float4(worldPos, 1));
+                o.pos = UnityObjectToClipPos(objectPos);
+                o.vertexID = v.vertexID;
                 return o;
-            }
+            } 
 
-            fixed4 frag (v2f i) : SV_Target
-            {
-                // sample the texture
-                fixed4 col = i.color;
-                // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, col);
-                return col;
+            fixed4 frag(v2f i) : SV_Target {
+                float intensity = (_IntensityData[i.vertexID] - _IntensityMin) / (_IntensityMax - _IntensityMin);
+                intensity = clamp(intensity, 0.0, 1.0);
+                fixed4 color = tex2D(_GradientTex, float2(intensity, 0));
+                color.a = _Opacity;
+                return color;
             }
             ENDCG
         }

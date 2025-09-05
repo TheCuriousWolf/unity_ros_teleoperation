@@ -17,6 +17,7 @@ On the ROS side, the custom [TCP Endpoint](https://github.com/leggedrobotics/ROS
 | --- | --- | --- | --- |
 | Audio Streamer | Implements bidirectional audio stream over ROS | [Assets/Components/AudioStreamer](Assets/Components/AudioStreamer) | ![](/docs/images/AudioStreamer.gif) |
 | Camera Viewer | Renders a ROS image stream to a floating image window | [Assets/Components/CameraView](Assets/Components/CameraView) | ![](/docs/images/images.gif) |
+| Grid Map | Renders a 2.5D grid map such as elevation maps from Anymal | [Assets/Components/GridMap](Assets/Components/GridMap) | ![](/docs/images/gridmap.gif) |
 | Hands | Hand tracking and pose publishing over ROS, compatible with Ability hand models | [Assets/Components/Hands](Assets/Components/Hands) | ![](/docs/images/hands.gif) |
 | Haptic | Bhaptic glove support  plus controller haptics | [Assets/Components/Haptics](Assets/Components/Haptics) | ![](/docs/images/haptics.gif) |
 | Headset Publisher | Publishes headset and hand poses on TF and Pose | [Assets/Components/HeadsetPublisher](Assets/Components/HeadsetPublisher) | ![](/docs/images/tf.gif) |
