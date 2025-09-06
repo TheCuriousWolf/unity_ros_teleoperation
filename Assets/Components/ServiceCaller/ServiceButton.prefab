@@ -754,8 +754,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b1b6a53866d2ff48973412f055b5071, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  topicDropdown: {fileID: 0}
+  topicName: 
   manager: {fileID: 0}
-  topic: /image_trigger
   topicText: {fileID: 2589902538612796193}
   topicInputField: {fileID: 1587538153820895874}
 --- !u!54 &1465527657372872704

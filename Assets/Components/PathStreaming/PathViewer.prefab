@@ -590,7 +590,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 5
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &6595384678685422894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -818,8 +818,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ed4f17bac0de9dec9eedbf17c501f5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  topicDropdown: {fileID: 7136900287053996704}
+  topicName: /path
   manager: {fileID: 0}
-  dropdown: {fileID: 7136900287053996704}
   topicText: {fileID: 1541739199173025421}
   countText: {fileID: 5932486479237601729}
   arrowMaterial: {fileID: 2100000, guid: 181bc947bb18065598ad1d23398fd24a, type: 2}
@@ -856,7 +857,6 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   _parent: {fileID: 0}
   maxPoints: 1000
-  topicName: /path
   scale: 0.5
   arrowRadius: 0.25
   arrowSides: 8

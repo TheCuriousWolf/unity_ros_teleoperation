@@ -1522,7 +1522,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 5
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &5386350759691659569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1750,20 +1750,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1185d37376fa7ac79a90d08b59b34f6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  topicDropdown: {fileID: 789149006802611987}
+  topicName: 
   manager: {fileID: 0}
   point_material: {fileID: 2100000, guid: 4a361d2cecf991e49aed96934cdc50f4, type: 2}
   scale: 0.1
   maxPts: 30000000
   displayPts: 100000
   sides: 3
-  topic: 
   vizType: 0
   colorMode: 1
   intensityMin: {r: 0, g: 0, b: 0, a: 1}
   intensityMax: {r: 1, g: 1, b: 1, a: 1}
   densitySlider: {fileID: 5556720871005494764}
   sizeSlider: {fileID: 2618189240512244449}
-  topicDropdown: {fileID: 789149006802611987}
   colorModeDropdown: {fileID: 1961523899843784558}
   debugText: {fileID: 2304420999122055532}
   topicText: {fileID: 6615792982704765499}

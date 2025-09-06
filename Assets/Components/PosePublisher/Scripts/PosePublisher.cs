@@ -99,7 +99,6 @@ public class PosePublisher : MonoBehaviour
 
     public void FirstSelected(Vector3 hitPosition)
     {
-        Debug.Log("First Selected");
 
         if (!_enabled) return;
 
@@ -142,7 +141,6 @@ public class PosePublisher : MonoBehaviour
 
     public void LastSelected(Vector3 hitPosition)
     {
-        Debug.Log("Last Selected");
 
         end = hitPosition;
 

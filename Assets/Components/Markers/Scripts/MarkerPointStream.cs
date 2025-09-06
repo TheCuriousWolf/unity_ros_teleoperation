@@ -37,9 +37,6 @@ public class MarkerPointStream : MonoBehaviour, IMarkerViz
     // Start is called before the first frame update
     void Awake()
     {
-
-
-
         // mesh = LidarUtils.MakePolygon(sides);
         mesh = LidarUtils.MakeCube();
 
@@ -138,6 +135,8 @@ public class MarkerPointStream : MonoBehaviour, IMarkerViz
         _meshVertices = null;
         _ptData?.Dispose();
         _ptData = null;
+        _rotData?.Dispose();
+        _rotData = null;
     }
 
 

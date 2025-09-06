@@ -7,7 +7,7 @@ using Unity.Robotics.ROSTCPConnector;
 using RosMessageTypes.Std;
 using RosMessageTypes.Geometry;
 using RosMessageTypes.Sensor;
-using RosMessageTypes.RetargetingRos;
+using RosMessageTypes.VrHaptic;
 using TMPro;
 using UnityEngine.InputSystem;
 

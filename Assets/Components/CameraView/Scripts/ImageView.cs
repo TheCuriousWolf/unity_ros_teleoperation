@@ -30,7 +30,7 @@ public class ImageViewEditor : Editor
         {
             imageView.OnSelect(1);
         }
-        
+
         if (GUILayout.Button("Select Second Item"))
         {
             imageView.OnSelect(2);
@@ -54,7 +54,6 @@ public class ImageViewEditor : Editor
 [System.Serializable]
 public class ImageData : ISensorData
 {
-    public int trackingState;
     public bool flip;
     public bool stereo;
 }
@@ -62,27 +61,19 @@ public class ImageData : ISensorData
 [System.Serializable]
 public class ImageView : SensorStream
 {
-    public Dropdown dropdown;
     public GameObject topMenu;
-    public TMPro.TextMeshProUGUI name;
+    public TMPro.TextMeshProUGUI nameText;
     public Sprite untracked;
     public Sprite tracked;
     public Sprite headTracked;
     public ComputeShader debayer;
     public Material material;
 
-    public string topicName;
-
     private RenderTexture _texture2D;
     protected Transform _Img;
 
-    protected int _lastSelected = 0;
-
     protected GameObject _frustrum;
     protected Image _icon;
-    protected ROSConnection ros;
-
-    public int _trackingState = 0;
     protected GameObject _root;
     protected Sprite[] icons;
 
@@ -92,11 +83,37 @@ public class ImageView : SensorStream
         BGGR,
         GBRG,
         GRBG,
-        None=-1,
+        None = -1,
     }
 
     public DebayerMode debayerType = DebayerMode.GRBG;
 
+    void Awake()
+    {
+        _msgType = "sensor_msgs/Image";
+
+        _ros = ROSConnection.GetOrCreateInstance();
+        nameText.text = "None";
+
+        icons = new Sprite[] { untracked, headTracked, tracked };
+        _icon = topMenu.transform.Find("Track/Image/Image").GetComponent<Image>();
+        _Img = transform.Find("Img");
+        material = _Img.GetComponent<MeshRenderer>().material;
+
+        _frustrum = transform.Find("Frustrum")?.gameObject;
+        _frustrum?.SetActive(false);
+
+        _root = GameObject.FindWithTag("root");
+    }
+
+    protected virtual void Start()
+    {
+        topicDropdown.onValueChanged.AddListener(OnSelect);
+        topicDropdown.gameObject.SetActive(false);
+        topMenu.SetActive(false);
+
+        RefreshTopics();
+    }
 
     public void OnValidate()
     {
@@ -110,7 +127,7 @@ public class ImageView : SensorStream
     {
         GameObject target = GameObject.Find(name);
 
-        if(target == null)
+        if (target == null)
         {
             return false;
         }
@@ -119,25 +136,25 @@ public class ImageView : SensorStream
 
         // check if this is connected to root
         int count = 0;
-        while(target.transform.parent != null)
+        while (target.transform.parent != null)
         {
             count++;
             children.Add(target);
             target = target.transform.parent.gameObject;
-            if(target.name == "odom")
+            if (target.name == "odom")
             {
                 children.Clear();
                 Debug.Log("Connected to root");
                 return true;
             }
-            if(count > 100)
+            if (count > 100)
             {
                 Debug.LogError("Looping too much");
                 return false;
             }
         }
 
-        foreach(GameObject child in children)
+        foreach (GameObject child in children)
         {
             Destroy(child);
         }
@@ -147,9 +164,9 @@ public class ImageView : SensorStream
     protected void UpdatePose(string frame)
     {
         CleanTF(frame);
-        
+
         GameObject _parent = GameObject.Find(frame);
-        if(_parent == null) return;
+        if (_parent == null) return;
 
         transform.parent = _parent.transform;
         transform.localPosition = new Vector3(0.1f, 0.2f, 0);
@@ -157,39 +174,13 @@ public class ImageView : SensorStream
         // transform.localScale = new Vector3(-1, 1, 1);
     }
 
-    void Awake()
+    private void OnDestroy()
     {
-        ros = ROSConnection.GetOrCreateInstance();
-        name.text = "None";
-
-        icons = new Sprite[] {untracked, headTracked, tracked};
-        _icon = topMenu.transform.Find("Track/Image/Image").GetComponent<Image>();
-
+        if (topicName != null)
+            _ros.Unsubscribe(topicName);
     }
 
-    protected virtual void Start()
-    {
-        _Img = transform.Find("Img");
-        material = _Img.GetComponent<MeshRenderer>().material;
-
-        dropdown.onValueChanged.AddListener(OnSelect);
-
-        dropdown.gameObject.SetActive(false);
-        topMenu.SetActive(false);
-
-        ros.GetTopicAndTypeList(UpdateTopics);
-
-        _frustrum = transform.Find("Frustrum")?.gameObject;
-        _frustrum?.SetActive(false);
-
-        _root = GameObject.Find("odom");
-    }
-
-    private void OnDestroy() {
-        ros.Unsubscribe(topicName);
-    }
-
-    protected virtual void UpdateTopics(Dictionary<string, string> topics)
+    protected override void UpdateTopics(Dictionary<string, string> topics)
     {
         List<string> options = new List<string>();
         options.Add("None");
@@ -200,26 +191,27 @@ public class ImageView : SensorStream
                 // issue with depth images at the moment
                 if (topic.Key.Contains("depth")) continue;
 
-                if(topic.Key.Contains("small"))
+                if (topic.Key.Contains("small"))
                 {
                     options.Insert(1, topic.Key);
-                } else
+                }
+                else
                 {
                     options.Add(topic.Key);
                 }
             }
         }
 
-        if(options.Count == 1)
+        if (options.Count == 1)
         {
             Debug.LogWarning("No image topics found!");
             return;
         }
-        dropdown.ClearOptions();
+        topicDropdown.ClearOptions();
 
-        dropdown.AddOptions(options);
+        topicDropdown.AddOptions(options);
 
-        dropdown.value = Mathf.Min(_lastSelected, options.Count - 1);
+        topicDropdown.value = Mathf.Min(_lastSelected, options.Count - 1);
     }
 
     public override void ToggleTrack(int newState)
@@ -253,7 +245,7 @@ public class ImageView : SensorStream
     public void ToggleTrack()
     {
         ToggleTrack(_trackingState + 1);
-        dropdown.gameObject.SetActive(false);
+        topicDropdown.gameObject.SetActive(false);
         topMenu.SetActive(false);
     }
 
@@ -273,9 +265,41 @@ public class ImageView : SensorStream
 
     public virtual void OnClick()
     {
-        ros.GetTopicAndTypeList(UpdateTopics);
-        dropdown.gameObject.SetActive(!dropdown.gameObject.activeSelf);
-        topMenu.gameObject.SetActive(dropdown.gameObject.activeSelf);
+        RefreshTopics();
+        topicDropdown.gameObject.SetActive(!topicDropdown.gameObject.activeSelf);
+        topMenu.gameObject.SetActive(topicDropdown.gameObject.activeSelf);
+    }
+
+    public override void OnTopicChange(string topic)
+    {
+        nameText.text = topic;
+
+        if (string.IsNullOrEmpty(topic))
+        {
+            if (topicName != null)
+                _ros.Unsubscribe(topicName);
+
+            topicName = null;
+            // set texture to grey
+            material.SetTexture("_BaseMap", null);
+
+            topicDropdown.gameObject.SetActive(false);
+            topMenu.SetActive(false);
+            return;
+        }
+
+        topicName = topic;
+
+        if (topicName.EndsWith("compressed"))
+        {
+            _ros.Subscribe<CompressedImageMsg>(topicName, OnCompressed);
+        }
+        else
+        {
+            _ros.Subscribe<ImageMsg>(topicName, OnImage);
+        }
+        topicDropdown.gameObject.SetActive(false);
+        topMenu.SetActive(false);
     }
 
     public virtual void OnSelect(int value)
@@ -285,33 +309,14 @@ public class ImageView : SensorStream
         _lastSelected = value;
 
         if (topicName != null)
-            ros.Unsubscribe(topicName);
+            _ros.Unsubscribe(topicName);
 
-        name.text = dropdown.options[value].text;
+        string selectedTopic = topicDropdown.options[value].text;
 
-        if (value == 0)
-        {
-            topicName = null;
-            // set texture to grey
-            material.SetTexture("_BaseMap", null);
-            
-            dropdown.gameObject.SetActive(false);
-            topMenu.SetActive(false);
-            return;
-        }
+        if (selectedTopic == "None")
+            selectedTopic = null;
 
-        topicName = dropdown.options[value].text;
-
-        if (topicName.EndsWith("compressed"))
-        {
-            ros.Subscribe<CompressedImageMsg>(topicName, OnCompressed);
-        }
-        else
-        {
-            ros.Subscribe<ImageMsg>(topicName, OnImage);
-        }
-        dropdown.gameObject.SetActive(false);
-        topMenu.SetActive(false);
+        OnTopicChange(selectedTopic);
     }
 
     protected virtual void SetupTex(int width = 2, int height = 2)
@@ -338,35 +343,34 @@ public class ImageView : SensorStream
         RenderTexture.active = null;
 
         byte[] bytes = tex.EncodeToPNG();
-        
-        string filename = name.text.Replace("/", "_");
+
+        string filename = nameText.text.Replace("/", "_");
         System.IO.File.WriteAllBytes(Application.dataPath + "/../" + filename + ".png", bytes);
     }
 
     protected virtual void Resize()
     {
         if (_texture2D == null) return;
-        float aspectRatio = (float)_texture2D.width/(float)_texture2D.height;
+        float aspectRatio = (float)_texture2D.width / (float)_texture2D.height;
 
         float width = _Img.transform.localScale.x;
         float height = width / aspectRatio;
-        
+
         _Img.localScale = new Vector3(width, 1, height);
     }
 
     protected virtual void ParseHeader(HeaderMsg header)
-    {   
+    {
         if (_trackingState == 2)
         {
             // If we are tracking to the TF, update the parent
-            if(header.frame_id != null && (transform.parent == null || header.frame_id != transform.parent.name))
+            if (header.frame_id != null && (transform.parent == null || header.frame_id != transform.parent.name))
             {
                 _frustrum?.SetActive(true);
                 // If the parent is not the same as the frame_id, update the parent
                 UpdatePose(header.frame_id);
             }
-
-        } 
+        }
     }
 
     void OnCompressed(CompressedImageMsg msg)
@@ -381,7 +385,7 @@ public class ImageView : SensorStream
             _input.Apply();
             SetupTex(_input.width, _input.height);
 
-            if(debayerType == DebayerMode.None)
+            if (debayerType == DebayerMode.None)
             {
                 RenderTexture.active = _texture2D;
                 Graphics.Blit(_input, _texture2D);
@@ -424,32 +428,22 @@ public class ImageView : SensorStream
 
     public override void Deserialize(string data)
     {
-        try{
+        try
+        {
             ImageData imgData = JsonUtility.FromJson<ImageData>(data);
-            
+
             transform.position = imgData.position;
             transform.rotation = imgData.rotation;
             transform.localScale = imgData.scale;
             topicName = imgData.topicName;
             _trackingState = imgData.trackingState;
 
-            if (topicName.EndsWith("compressed"))
-            {
-                ros.Subscribe<CompressedImageMsg>(topicName, OnCompressed);
-                name.text = topicName;
-            }
-            else if (topicName != null)
-            {
-                ros.Subscribe<ImageMsg>(topicName, OnImage);
-                name.text = topicName;
-            }
+            OnTopicChange(topicName);
         }
         catch (System.Exception e)
         {
             Debug.LogError(e);
             Debug.LogError("Error deserializing image data! Most likely old data format, clearing prefs");
-            PlayerPrefs.DeleteKey("layout");
-            PlayerPrefs.Save();
         }
     }
 

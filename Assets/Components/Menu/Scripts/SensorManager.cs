@@ -55,6 +55,7 @@ public class ISensorData
     public Quaternion rotation;
     public Vector3 scale;
     public string topicName;
+    public int trackingState;
 }
 
 
@@ -127,14 +128,12 @@ public abstract class SensorManager : MonoBehaviour, IComparable<SensorManager>
     
     public string Serialize()
     {
-        Debug.Log("Serializing SensorManager");
         SensorManagerData data = new SensorManagerData();
         data.data = new string[sensors.Count];
 
         for (int i = 0; i < sensors.Count; i++)
         {
             data.data[i] = sensors[i].GetComponent<SensorStream>().Serialize();
-            Debug.Log("Serialized sensor: " + data.data[i]);
         }
 
 

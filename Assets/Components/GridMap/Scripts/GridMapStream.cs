@@ -15,17 +15,14 @@ using Unity.VisualScripting;
 public class GridMapStream : SensorStream
 {
 
-    public Dropdown topicDropdown;
     public Dropdown colorDropdown;
     public Dropdown heightDropdown;
 
 
     public TextMeshProUGUI topicText;
-    public string topic = "/elevation_mapping/elevation_map_raw";
     public float opacity = 1.0f;
     public Gradient gradient;
     public Material gridMapMaterial;
-    ROSConnection _ros;
 
     public GameObject _parent;
 
@@ -41,21 +38,23 @@ public class GridMapStream : SensorStream
     private float[][] _data;
     public GameObject empty;
     private Matrix4x4 _transform = Matrix4x4.identity;
-    // Start is called before the first frame update
+
+    void Awake()
+    {
+        _msgType = "grid_map_msgs/GridMap";
+        _ros = ROSConnection.GetOrCreateInstance();
+    }
+
     void Start()
     {
-        _ros = ROSConnection.GetOrCreateInstance();
-
-        if (topic != null)
-            _ros.Subscribe<GridMapMsg>(topic, OnGridMapMessage);
 
         empty = new GameObject("Empty");
 
-
-        topicText?.SetText(topic);
+        topicText?.SetText(topicName);
         topicDropdown?.ClearOptions();
         colorDropdown?.ClearOptions();
         heightDropdown?.ClearOptions();
+
         RefreshTopics();
         _enabled = true;
 
@@ -63,9 +62,7 @@ public class GridMapStream : SensorStream
         GetComponent<MeshRenderer>().material = gridMapMaterial;
         _material = GetComponent<MeshRenderer>().material;
 
-
-        UpdateMesh(10, 10);
-
+        // UpdateMesh(10, 10);
 
         colorDropdown.AddOptions(new List<string>(new string[] { "--" }));
         colorDropdown.onValueChanged.AddListener(OnColorChange);
@@ -100,16 +97,6 @@ public class GridMapStream : SensorStream
         GetComponent<MeshFilter>().mesh = _mesh;
     }
 
-    private void Update()
-    {
-        if (_enabled && _mesh != null)
-        {
-            // _material.SetMatrix("_ObjectToWorld", _transform);
-            // _material.SetBuffer("_IntensityData", _intensityData);
-
-            // Graphics.RenderPrimitivesIndexed(renderParams, MeshTopology.Triangles, _meshTriangles, _meshTriangles.count, (int)_mesh.GetIndexStart(0), _numPts);
-        }
-    }
 
 
     void OnGridMapMessage(GridMapMsg message)
@@ -125,7 +112,7 @@ public class GridMapStream : SensorStream
 
 
         // check if we have changed sizes
-        if (message.data[0].data.Length != _mesh.vertexCount)
+        if (_mesh == null || message.data[0].data.Length != _mesh.vertexCount)
         {
             Debug.Log("GridMap: Changing mesh size to " + message.data[0].layout.dim[1].size + "x" + message.data[0].layout.dim[0].size);
             UpdateMesh((int)message.data[0].layout.dim[1].size, (int)message.data[0].layout.dim[0].size);
@@ -182,53 +169,22 @@ public class GridMapStream : SensorStream
     }
 
 
-    protected virtual void UpdateTopics(Dictionary<string, string> topics)
+    public void OnDestroy()
     {
-        List<string> options = new List<string>();
-        options.Add("None");
-        foreach (var topic in topics)
-        {
-            if (topic.Value == "grid_map_msgs/GridMap")
-            {
-                options.Add(topic.Key);
-            }
-        }
-
-        if (options.Count == 1)
-        {
-            Debug.LogWarning("No Grid Map topics found!");
-            return;
-        }
-
-        topicDropdown.ClearOptions();
-
-        topicDropdown.AddOptions(options);
-
-        topicDropdown.value = Mathf.Min(0, options.Count - 1);
-    }
-
-
-    public void RefreshTopics()
-    {
-        _ros.GetTopicAndTypeList(UpdateTopics);
-    }
-
-    public void Oestroy()
-    {
-        if (topic != null)
-            _ros.Unsubscribe(topic);
+        if (topicName != null)
+            _ros.Unsubscribe(topicName);
         _gridData?.Dispose();
         _intensityData?.Dispose();
         _gridData = null;
         _intensityData = null;
     }
 
-    public void OnTopicChange(string topic)
+    public override void OnTopicChange(string topic)
     {
-        if (this.topic != null)
+        if (topicName != null)
         {
-            _ros.Unsubscribe(this.topic);
-            this.topic = null;
+            _ros.Unsubscribe(topicName);
+            topicName = null;
         }
         if (topic == null)
         {
@@ -238,7 +194,7 @@ public class GridMapStream : SensorStream
             return;
         }
         _enabled = true;
-        this.topic = topic;
+        topicName = topic;
         topicText?.SetText(topic);
         _ros.Subscribe<GridMapMsg>(topic, OnGridMapMessage);
         Debug.Log("Subscribed to " + topic);
@@ -303,17 +259,6 @@ public class GridMapStream : SensorStream
             _material.SetTexture("_GradientTex", LidarUtils.GradientToTexture(gradient));
             _material.SetFloat("_Opacity", opacity);
         }
-    }
-
-
-    public override string Serialize()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public override void Deserialize(string data)
-    {
-        throw new System.NotImplementedException();
     }
 
     public override void ToggleTrack(int mode)

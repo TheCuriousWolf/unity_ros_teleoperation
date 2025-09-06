@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Robotics.ROSTCPConnector;
-using RosMessageTypes.Haptic;
+using RosMessageTypes.VrHaptic;
 
 public class HandSubscriber : MonoBehaviour
 {

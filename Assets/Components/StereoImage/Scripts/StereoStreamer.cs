@@ -17,7 +17,7 @@ using UnityEditor;
 
 [CustomEditor(typeof(StereoStreamer))]
 public class StereoStreamerEditor : ImageViewEditor
-{}
+{ }
 #endif
 
 
@@ -40,19 +40,19 @@ public class StereoStreamer : ImageView
             if (topic.Value == "sensor_msgs/Image" || topic.Value == "sensor_msgs/CompressedImage")
             {
                 // issue with depth images at the moment
-                if (topic.Key.Contains("left")) 
+                if (topic.Key.Contains("left"))
                     options.Add(topic.Key);
             }
         }
 
-        if(options.Count == 1)
+        if (options.Count == 1)
         {
             Debug.LogWarning("No image topics found!");
             return;
         }
-        dropdown.ClearOptions();
-        dropdown.AddOptions(options);
-        dropdown.value = Mathf.Min(_lastSelected, options.Count - 1);
+        topicDropdown.ClearOptions();
+        topicDropdown.AddOptions(options);
+        topicDropdown.value = Mathf.Min(_lastSelected, options.Count - 1);
     }
 
     /// <summary>
@@ -60,23 +60,35 @@ public class StereoStreamer : ImageView
     /// </summary>
     public void Flip()
     {
-        Debug.Log("Flip not yet implemented");    
+        Debug.Log("Flip not yet implemented");
     }
+
 
     public override void OnSelect(int value)
     {
         if (value == _lastSelected) return;
+
         _lastSelected = value;
 
         if (topicName != null)
         {
-            ros.Unsubscribe(topicName);
-            ros.Unsubscribe(topicName.Replace("left", "right"));
+            _ros.Unsubscribe(topicName);
+            _ros.Unsubscribe(topicName.Replace("left", "right"));
         }
 
-        name.text = dropdown.options[value].text.Split(' ')[0];
+        string selectedTopic = topicDropdown.options[value].text;
 
-        if (value == 0)
+        if (selectedTopic == "None")
+            selectedTopic = null;
+
+        OnTopicChange(selectedTopic);
+    }
+
+    public override void OnTopicChange(string topic)
+    {
+        nameText.text = topic;
+
+        if (topic == null)
         {
             topicName = null;
             // set texture to grey
@@ -85,27 +97,24 @@ public class StereoStreamer : ImageView
 
             _rightTexture2D = new Texture2D(3, 2, TextureFormat.RGBA32, false);
             material.SetTexture("_RightTex", _rightTexture2D);
-            
-            dropdown.gameObject.SetActive(false);
+
+            topicDropdown.gameObject.SetActive(false);
             topMenu.SetActive(false);
             return;
         }
 
-        topicName = dropdown.options[value].text;
-
         if (topicName.EndsWith("compressed"))
         {
-            ros.Subscribe<CompressedImageMsg>(topicName, OnCompressedLeft);
-            ros.Subscribe<CompressedImageMsg>(topicName.Replace("left", "right"), OnCompressedRight);
+            _ros.Subscribe<CompressedImageMsg>(topicName, OnCompressedLeft);
+            _ros.Subscribe<CompressedImageMsg>(topicName.Replace("left", "right"), OnCompressedRight);
         }
         else
         {
             Debug.LogError("Only compressed images are supported at the moment");
             // ros.Subscribe<ImageMsg>(topicName, OnImage);
         }
-        dropdown.gameObject.SetActive(false);
+        topicDropdown.gameObject.SetActive(false);
         topMenu.SetActive(false);
-
     }
 
     /// <summary>
@@ -148,11 +157,11 @@ public class StereoStreamer : ImageView
     private void Resize()
     {
         if (_leftTexture2D == null) return;
-        float aspectRatio = (float)_leftTexture2D.width/(float)_leftTexture2D.height;
+        float aspectRatio = (float)_leftTexture2D.width / (float)_leftTexture2D.height;
 
         float width = _Img.transform.localScale.x;
         float height = width / aspectRatio;
-        
+
         _Img.localScale = new Vector3(width, 1, height);
     }
 
@@ -162,12 +171,12 @@ public class StereoStreamer : ImageView
     /// <param name="msg"></param>
     void OnCompressedLeft(CompressedImageMsg msg)
     {
-        SetupTex(2,2,true);
+        SetupTex(2, 2, true);
         ParseHeader(msg.header);
 
         try
         {
-            ImageConversion.LoadImage(_leftTexture2D , msg.data);
+            ImageConversion.LoadImage(_leftTexture2D, msg.data);
             _leftTexture2D.Apply();
             Resize();
         }
@@ -183,12 +192,12 @@ public class StereoStreamer : ImageView
     /// <param name="msg"></param>
     void OnCompressedRight(CompressedImageMsg msg)
     {
-        SetupTex(2,2,false);
+        SetupTex(2, 2, false);
         ParseHeader(msg.header);
 
         try
         {
-            ImageConversion.LoadImage(_rightTexture2D , msg.data);
+            ImageConversion.LoadImage(_rightTexture2D, msg.data);
             _rightTexture2D.Apply();
             Resize();
         }
@@ -202,14 +211,15 @@ public class StereoStreamer : ImageView
     {
         if (topicName != null)
         {
-            ros.Unsubscribe(topicName);
-            ros.Unsubscribe(topicName.Replace("left", "right"));
+            _ros.Unsubscribe(topicName);
+            _ros.Unsubscribe(topicName.Replace("left", "right"));
         }
     }
 
     public override void Deserialize(string data)
     {
-        try{
+        try
+        {
             ImageData imgData = JsonUtility.FromJson<ImageData>(data);
 
             transform.position = imgData.position;
@@ -219,14 +229,14 @@ public class StereoStreamer : ImageView
 
             topicName = imgData.topicName;
 
-            if(topicName == null)
+            if (topicName == null)
             {
                 return;
             }
 
-            name.text = topicName;
-            ros.Subscribe<CompressedImageMsg>(topicName, OnCompressedLeft);
-            ros.Subscribe<CompressedImageMsg>(topicName.Replace("left", "right"), OnCompressedRight);
+            nameText.text = topicName;
+            _ros.Subscribe<CompressedImageMsg>(topicName, OnCompressedLeft);
+            _ros.Subscribe<CompressedImageMsg>(topicName.Replace("left", "right"), OnCompressedRight);
         }
         catch (System.Exception e)
         {
@@ -235,7 +245,7 @@ public class StereoStreamer : ImageView
             PlayerPrefs.DeleteKey("layout");
             PlayerPrefs.Save();
         }
-        
+
     }
     public override string Serialize()
     {

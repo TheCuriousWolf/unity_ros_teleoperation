@@ -3069,8 +3069,8 @@ MonoBehaviour:
   activeController: {fileID: 2108932052028572269, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   twistController: {fileID: -7456493207024446836, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   poseController: {fileID: -5159384287782571273, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  infoText: {fileID: 0}
-  worldFrame: quest_origin
+  infoText: {fileID: 7125724497677020269}
+  worldFrame: vr_origin
 --- !u!1 &1731790241176204584
 GameObject:
   m_ObjectHideFlags: 0
@@ -15933,14 +15933,6 @@ PrefabInstance:
     - target: {fileID: 7142201307236935636, guid: f59b362975b27e9a9908a025b525238f, type: 3}
       propertyPath: m_Name
       value: PathStreamManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 7294673035229260654, guid: f59b362975b27e9a9908a025b525238f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7975844842994455582, guid: f59b362975b27e9a9908a025b525238f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8501579172111288637, guid: f59b362975b27e9a9908a025b525238f, type: 3}
       propertyPath: m_text

@@ -7,6 +7,8 @@ using Unity.Robotics.ROSTCPConnector;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
+using Unity.VisualScripting;
+
 
 
 #if UNITY_EDITOR
@@ -18,38 +20,38 @@ public class LidarStreamEditor : Editor
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
-        
+
 
         LidarStream myScript = (LidarStream)target;
-        if(GUILayout.Button("Toggle Enabled"))
+        if (GUILayout.Button("Toggle Enabled"))
         {
             myScript.ToggleEnabled();
         }
-        if(GUILayout.Button("Refresh Topics"))
+        if (GUILayout.Button("Refresh Topics"))
         {
             myScript.RefreshTopics();
         }
-        if(GUILayout.Button("Select 0"))
+        if (GUILayout.Button("Select 0"))
         {
             myScript.OnTopicSelect(0);
         }
-        if(GUILayout.Button("Select 1"))
+        if (GUILayout.Button("Select 1"))
         {
             myScript.OnTopicSelect(1);
         }
-        if(GUILayout.Button("Set color to RGB"))
+        if (GUILayout.Button("Set color to RGB"))
         {
             myScript.OnColorSelect(0);
         }
-        if(GUILayout.Button("Set color to Intensity"))
+        if (GUILayout.Button("Set color to Intensity"))
         {
             myScript.OnColorSelect(1);
         }
-        if(GUILayout.Button("Set color to Z"))
+        if (GUILayout.Button("Set color to Z"))
         {
             myScript.OnColorSelect(2);
         }
-        if(GUILayout.Button("Clear"))
+        if (GUILayout.Button("Clear"))
         {
             myScript.Clear();
         }
@@ -99,12 +101,6 @@ public static class VizTypeExtensions
     }
 }
 
-[System.Serializable]
-public class PointData : ISensorData
-{
-
-}
-
 
 public class LidarStream : SensorStream
 {
@@ -119,7 +115,6 @@ public class LidarStream : SensorStream
     public int displayPts = 10;
     public int sides = 3;
     private RenderParams renderParams;
-    public string topic = "/lidar/point_cloud";
     public VizType vizType = VizType.Lidar;
 
     public ColorMode colorMode = ColorMode.Intensity;
@@ -128,14 +123,12 @@ public class LidarStream : SensorStream
 
     public Slider densitySlider;
     public Slider sizeSlider;
-    public Dropdown topicDropdown;
     public Dropdown colorModeDropdown;
 
     public TextMeshProUGUI debugText;
     public TextMeshProUGUI topicText;
 
 
-    private ROSConnection _ros;
     private Mesh mesh;
     private LidarSpawner _lidarSpawner;
     public bool _enabled = false;
@@ -148,13 +141,13 @@ public class LidarStream : SensorStream
     private LocalKeyword _rgbdKeyword;
     private LocalKeyword _intensityKeyword;
     private LocalKeyword _zKeyword;
-    private GameObject _viz;
 
     public GameObject p;
 
 
     void Awake()
     {
+        _msgType = "sensor_msgs/PointCloud2";
         _ros = ROSConnection.GetOrCreateInstance();
 
         mesh = LidarUtils.MakePolygon(sides);
@@ -207,9 +200,9 @@ public class LidarStream : SensorStream
             _lidarSpawner.PointCloudGenerated += OnPointcloud;
         }
 
-        if (_enabled && !string.IsNullOrEmpty(topic))
+        if (_enabled && !string.IsNullOrEmpty(topicName))
         {
-            _ros.Subscribe<PointCloud2Msg>(topic, OnPointcloud);
+            _ros.Subscribe<PointCloud2Msg>(topicName, OnPointcloud);
         }
     }
 
@@ -308,7 +301,8 @@ public class LidarStream : SensorStream
 
     private void OnDestroy()
     {
-        _ros.Unsubscribe(topic);
+        if (topicName != null)
+            _ros.Unsubscribe(topicName);
         _meshTriangles?.Dispose();
         _meshTriangles = null;
         _meshVertices?.Dispose();
@@ -361,12 +355,15 @@ public class LidarStream : SensorStream
         debugText?.SetText(txt);
     }
 
-    public void OnTopicChange(string topic)
+    public override void OnTopicChange(string topic)
     {
-        if (this.topic != null)
+        if (string.IsNullOrEmpty(topic))
+            topic = null;
+
+        if (topicName != null)
         {
-            _ros.Unsubscribe(this.topic);
-            this.topic = null;
+            _ros.Unsubscribe(topicName);
+            topicName = null;
         }
         if (topic == null)
         {
@@ -376,7 +373,7 @@ public class LidarStream : SensorStream
             return;
         }
         _enabled = true;
-        this.topic = topic;
+        topicName = topic;
         topicText?.SetText(topic);
         _ros.Subscribe<PointCloud2Msg>(topic, OnPointcloud);
         Debug.Log("Subscribed to " + topic);
@@ -412,39 +409,6 @@ public class LidarStream : SensorStream
         renderParams.matProps.SetFloat("_PointSize", scale);
     }
 
-    protected virtual void UpdateTopics(Dictionary<string, string> topics)
-    {
-        List<string> options = new List<string>();
-        options.Add("None");
-        foreach (var topic in topics)
-        {
-            if (topic.Value == "sensor_msgs/PointCloud2")
-            {
-                // Put filtered topics at the top
-                if (topic.Key.Contains("filter"))
-                {
-                    options.Insert(1, topic.Key);
-                }
-                else
-                {
-                    options.Add(topic.Key);
-                }
-            }
-        }
-
-        if (options.Count == 1)
-        {
-            Debug.LogWarning("No point cloud topics found!");
-            return;
-        }
-
-        topicDropdown.ClearOptions();
-
-        topicDropdown.AddOptions(options);
-
-        topicDropdown.value = Mathf.Min(0, options.Count - 1);
-    }
-
     public void OnColorSelect(int value)
     {
         if (value < 0 || value >= colorModeDropdown.options.Count)
@@ -462,23 +426,19 @@ public class LidarStream : SensorStream
             _ => _intensityKeyword // Default to intensity if something goes wrong
         });
     }
-    public void RefreshTopics()
-    {
-        _ros.GetTopicAndTypeList(UpdateTopics);
-    }
 
     public void ToggleEnabled()
     {
         _enabled = !_enabled;
         if (!_enabled)
         {
-            _ros.Unsubscribe(topic);
+            _ros.Unsubscribe(topicName);
             _parent = null;
         }
         else
         {
-            Debug.Log("Subscribing to " + topic);
-            _ros.Subscribe<PointCloud2Msg>(topic, OnPointcloud);
+            Debug.Log("Subscribing to " + topicName);
+            _ros.Subscribe<PointCloud2Msg>(topicName, OnPointcloud);
         }
     }
 
@@ -517,7 +477,6 @@ public class LidarStream : SensorStream
         }
         _trackingMode = mode;
     }
-
     public void IncrementTrack()
     {
         _trackingMode++;
@@ -525,18 +484,7 @@ public class LidarStream : SensorStream
         {
             _trackingMode = 0;
         }
-        ToggleTrack(_trackingMode); 
+        ToggleTrack(_trackingMode);
     }
 
-    public override string Serialize()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public override void Deserialize(string data)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    
 }

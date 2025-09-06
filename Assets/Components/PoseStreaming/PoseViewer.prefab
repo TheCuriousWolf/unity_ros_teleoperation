@@ -564,7 +564,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 5
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &4545218620809984735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -792,13 +792,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 466fbe283a41cd74d8632d6449788582, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  topicDropdown: {fileID: 327366363797240936}
+  topicName: /pose
   manager: {fileID: 0}
-  dropdown: {fileID: 327366363797240936}
   topicText: {fileID: 4925723353927337479}
   arrowMaterial: {fileID: 2100000, guid: 181bc947bb18065598ad1d23398fd24a, type: 2}
   sizeSlider: {fileID: 1501331128457765964}
   _parent: {fileID: 0}
-  topicName: /pose
   scale: 1
   arrowRadius: 0.25
   arrowSides: 8

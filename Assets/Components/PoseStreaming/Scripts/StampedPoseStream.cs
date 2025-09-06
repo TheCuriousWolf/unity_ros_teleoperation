@@ -9,7 +9,6 @@ using RosMessageTypes.Geometry;
 
 public class StampedPoseStream : SensorStream
 {
-    public Dropdown dropdown;
     public TMPro.TextMeshProUGUI topicText;
     public Material arrowMaterial;
     
@@ -20,24 +19,22 @@ public class StampedPoseStream : SensorStream
 
     private RenderParams _renderParams;
     public Slider sizeSlider;
-    private ROSConnection _ros;
     private Mesh _mesh;
     public Transform _parent;
     private Quaternion _rotation = Quaternion.Euler(90, 0, 0);
-    private int _trackingMode = 0; // 0: None, 1: Camera
     private bool _enabled = true;
     private Vector4[] _ptArray;
     private Vector4[] _rotArray;
 
 
 
-    public string topicName;
     public float scale = 1.0f;
     public float arrowRadius = 0.25f;
     public int arrowSides = 10;
 
     public void Awake()
     {
+        _msgType = "geometry_msgs/PoseStamped";
         _ros = ROSConnection.GetOrCreateInstance();
         _mesh = LidarUtils.MakeArrow(arrowRadius, arrowSides);
 
@@ -67,13 +64,10 @@ public class StampedPoseStream : SensorStream
 
         
 
-        dropdown.ClearOptions();
-        dropdown.onValueChanged.AddListener((value) => { OnTopicSelected(value); });
+        topicDropdown.ClearOptions();
+        topicDropdown.onValueChanged.AddListener((value) => { OnTopicSelected(value); });
 
         RefreshTopics();
-
-        if (_enabled && topicName != null)
-            OnTopicChange(topicName);
     }
 
     private void Update()
@@ -88,13 +82,13 @@ public class StampedPoseStream : SensorStream
 
     public void OnTopicSelected(int value)
     {
-        if (value < 0 || value >= dropdown.options.Count)
+        if (value < 0 || value >= topicDropdown.options.Count)
         {
             Debug.LogWarning("Invalid topic selected: " + value);
             return;
             }
 
-        string selectedTopic = dropdown.options[value].text;
+        string selectedTopic = topicDropdown.options[value].text;
         if (selectedTopic == "None")
         {
                 OnTopicChange(null);
@@ -114,12 +108,12 @@ public class StampedPoseStream : SensorStream
         
     }
 
-    private void OnTopicChange(string newTopic)
+    public override void OnTopicChange(string newTopic)
     {
         if (topicName != null)
         {
             _ros.Unsubscribe(topicName);
-            this.topicName = null;
+            topicName = null;
         }
         if (newTopic == null)
         {
@@ -129,38 +123,10 @@ public class StampedPoseStream : SensorStream
             return;
         }
         _enabled = true;
-        this.topicName = newTopic;
+        topicName = newTopic;
         topicText?.SetText(newTopic);
         _ros.Subscribe<PoseStampedMsg>(newTopic, OnPose);
         Debug.Log("[PoseStream] Subscribed to " + newTopic);
-    }
-
-    protected virtual void UpdateTopics(Dictionary<string, string> topics)
-    {
-        List<string> options = new List<string>();
-        options.Add("None");
-        foreach (KeyValuePair<string, string> entry in topics)
-        {
-            if (entry.Value == "geometry_msgs/PoseStamped")
-            {
-                options.Add(entry.Key);
-            }
-        }
-
-        if (options.Count == 1)
-        {
-            Debug.LogWarning("No geometry_msgs/PoseStamped topics found!");
-        }
-
-        int currentIndex = Mathf.Max(0, options.IndexOf(topicName));
-        dropdown.ClearOptions();
-        dropdown.AddOptions(options);
-        dropdown.value = currentIndex;
-    }
-
-    public void RefreshTopics()
-    {
-        _ros.GetTopicAndTypeList(UpdateTopics);
     }
 
     private void OnPose(PoseStampedMsg msg)
@@ -177,7 +143,6 @@ public class StampedPoseStream : SensorStream
             }
             else
             {
-                Debug.LogWarning("PoseStream: Could not find frame " + msg.header.frame_id + ", defaulting to root");
                 _parent = GameObject.FindWithTag("root")?.transform;
             }
         }
@@ -203,22 +168,14 @@ public class StampedPoseStream : SensorStream
 
     private void OnDestroy()
     {
+        if (topicName != null)
+            _ros.Unsubscribe(topicName);
         _meshTriangles?.Dispose();
         _meshTriangles = null;
         _meshVertices?.Dispose();
         _meshVertices = null;
         _ptData?.Dispose();
         _ptData = null;
-    }
-
-    public override void Deserialize(string data)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public override string Serialize()
-    {
-        throw new System.NotImplementedException();
     }
 
     public override void ToggleTrack(int mode)
