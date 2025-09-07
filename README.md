@@ -22,20 +22,20 @@ On the ROS side, the custom [TCP Endpoint](https://github.com/leggedrobotics/ROS
 | Haptic | Bhaptic glove support  plus controller haptics | [Assets/Components/Haptics](Assets/Components/Haptics) | ![](/docs/images/haptics.png) | 
 | Headset Publisher | Publishes headset and hand poses on TF and Pose | [Assets/Components/HeadsetPublisher](Assets/Components/HeadsetPublisher) | ![](/docs/images/tf.gif) |
 | Lidar | GPU rendering for LiDAR and PointCloud2 point viz from ROS | [Assets/Components/Lidar](Assets/Components/Lidar) | ![](/docs/images/lidar.gif) |
+| Markers | Displays various ROS markers in the scene (supports points, cubes, spheres) | [Assets/Components/Markers](Assets/Components/Markers) | ![](/docs/images/markers.gif) |
 | Menu | Palm menu for interaction and toggling | [Assets/Components/Menu](Assets/Components/Menu) | ![](/docs/images/menu.gif) |
 | NeRFViewer | Handheld viewer for rendering NeRFs and scene interaction | [Assets/Components/NeRFViewer](Assets/Components/NeRFViewer) | ![](/docs/images/nerf.gif) |
 | PathStreamer | Displays nav paths with a line and series of arrows | [Assets/Components/PathStreaming](Assets/Components/PathStreaming) | ![](/docs/images/path.gif) |
 | PosePublisher | Publishes poses and Joystick commands for locomotion | [Assets/Components/PosePublisher](Assets/Components/PosePublisher) | ![](/docs/images/posegoals.gif) |
 | PoseStreamer | Displays stamped poses | [Assets/Components/PoseStreaming](Assets/Components/PoseStreaming) | ![](/docs/images/poses.gif) |
 | Robots | Robot model manager, holds the meshes, materials and the scripts to swap between Anymal, ALMA, Tytan, Standalone Dynaarm and Franka Panda | [Assets/Components/Robots](Assets/Components/Robots) | ![](/docs/images/robots.jpg) |
+| Service Caller | Creates a floating button that triggers an Empty service call when pressed | [Assets/Components/ServiceCaller](Assets/Components/ServiceCaller) | ![](/docs/images/service.png) |
 | Stereo | Stereo camera rendering, renders to each eye for human depth perception | [Assets/Components/StereoImage](Assets/Components/StereoImage) | ![](/docs/images/stereo.gif) |
-| TF | WiP new TF system for managing robots and reorientation | [Assets/Components/TFSystem](Assets/Components/TFSystem) | ![](/docs/images/tf.gif) |
+| TF | Updates for the Unity-ROS TF system for managing robots and reorientation including publishing headset and hands over TF | [Assets/Components/TFSystem](Assets/Components/TFSystem) | ![](/docs/images/tf.gif) |
+| TF Viz | Debug viewer to show currently streamed TF links | [Assets/Components/TFViz](Assets/Components/TFViz) | ![](/docs/images/tfdebug.gif) |
 | Voxblox | Voxel mesh rendering | [Assets/Components/VoxBlox](Assets/Components/VoxBlox) | ![](/docs/images/vox.gif) |
 | VR Debug | Debugging tools for VR, namely a console | [Assets/Components/VRDebug](Assets/Components/VRDebug) | ![](/docs/images/vr_console.jpg) |
 | VR Streamer | Streams a the VR view to a ROS topic (w/o AR view) | [Assets/Components/VRStreamer](Assets/Components/VRStreamer) | ![](/docs/images/streamer.jpg) |
-| Tactile Images | Displays tactile images on finger tips | [Assets/Components/TactileImages](Assets/Components/TactileImages) | ![](/docs/images/tactile.gif) |
-| Markers | Displays various ROS markers in the scene (supports points, cubes, spheres) | [Assets/Components/Markers](Assets/Components/Markers) | ![](/docs/images/markers.gif) |
-| TF Viz | Debug viewer to show currently streamed TF links | [Assets/Components/TFViz](Assets/Components/TFViz) | ![](/docs/images/tfdebug.gif) |
 
 
 ## Scenes
@@ -49,6 +49,23 @@ In general the scenes should have a few objects by default:
 ---
 
 ## Minor Version History
+
+### 0.1.0
+- Added 2D version of the app
+- Refactored new Manager-Streamer system for standardized message visualizations
+- Added new visualizations
+    - Markers (without meshes and text)
+    - Paths
+    - Stamped Poses
+    - TF Visualization for frames
+    - Grid Maps/Elevation Maps
+- Added floating button to trigger Empty service calls
+- Redid TF system so the root frame can be dynamic and not locked to odom (also allows functioning without a robot model)
+- Improved Pose publishing and allows to work with 2D interface
+- Added debug menus to display force
+- Overhauled PointCloud rendering for better performance and shader keywords for customized coloring
+- Added mesh shaders for efficently render large numbers of procedural meshes
+- Improved layout serialization allowing for saving of custom configurations
 
 ### 0.0.9
 - Simplified dynaarm model (down to 98 draw calls and 330k tris)

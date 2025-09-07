@@ -107,7 +107,7 @@ public class PoseManager : MonoBehaviour
 
         GameObject robot = GameObject.FindWithTag("robot");
 
-        if (_robot == null)
+        if (robot == null)
             Debug.LogWarning("PoseManager: robot not found");        
         else
             _robot = robot.transform;
