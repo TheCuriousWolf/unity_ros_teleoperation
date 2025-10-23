@@ -1,15 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using RosMessageTypes.Std;
 using RosMessageTypes.Sensor;
 using Unity.Robotics.ROSTCPConnector;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Experimental.Rendering;
 
 
 #if UNITY_EDITOR
@@ -102,6 +100,8 @@ public class StereoStreamer : ImageView
             topMenu.SetActive(false);
             return;
         }
+
+        topicName = topic;
 
         if (topicName.EndsWith("compressed"))
         {
